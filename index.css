@@ -1,4 +1,4 @@
-/*  *{
+/* *{
     border: 1px solid red;
 }  */
 
@@ -145,12 +145,12 @@ header{
 
  
 .job_section{
-    width: 70%;
+    width: 90%;
     float: right;
 }
 
 .job_section_2{
-  width: 70%;
+  width: 90%;
   float: left;
 }
 

@@ -1,0 +1,185 @@
+/* *{
+    border: 1px solid red;
+}   */
+
+
+@media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
+  }
+
+nav.navbar{
+    background: rgb(229, 235, 232);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 25%);
+}
+
+a.nav-link{
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+
+img.logo{
+    margin: 0.5em;
+}
+
+.dropdown-menu.show {
+    background-color:#9EB3A4;
+   
+}
+
+.dropdown-item{
+    font-size: 16px;
+    color: #2E2E2E;
+}
+
+#text{
+    font-weight: bolder;
+}
+
+header{
+    background-image: url(/Assets/images/aboutusheading.jpg);
+  background-size:  cover;
+}
+
+
+.masthead {
+    padding-top: calc(7rem + 74px);
+    padding-bottom: 11rem;
+  }
+  .masthead .masthead-heading {
+    font-size: 2.75rem;
+    line-height: 2.75rem;
+
+  }
+
+ 
+  
+  @media (min-width: 992px) {
+    .masthead {
+      padding-top: calc(7rem + 104px);
+      padding-bottom: 11rem;
+    }
+    .masthead .masthead-heading {
+      font-size: 4rem;
+      line-height: 3.5rem;
+    }
+    .masthead .masthead-subheading {
+      font-size: 1.5rem;
+    }
+  }
+
+  .firstbox{
+    padding: 3em 7em 3em 7em;
+  }
+  .fboxtxt{
+    font-size: 1.2em;
+    margin-top: 1em;
+  }
+
+  .atxt{
+    padding: 1em 6em 1em 6em;
+    font-size: 1em;
+  }
+
+  .copyright {
+    background-color: #678A71;
+    position: static;
+  }
+
+  .services_section{
+    width: 100%;
+    float: left;
+    position: relative;
+    padding-top: 30px;
+  }
+
+  .layout_padding {
+    padding-top: 90px;
+    padding-bottom: 0px;
+}
+
+.image_2 {
+    width: 100%;
+    float: left;
+    padding-left: 120px;
+    background-size: cover;
+}
+
+.box_main {
+    width: 100%;
+    float: left;
+    border: 1px solid #d3d3d3;
+    height: auto;
+    padding: 20px;
+    margin-top: 50px;
+}
+
+.technology_text {
+    width: 100%;
+    float: left;
+    font-size: 24px;
+    color: #05141f;
+    margin-left: 0px;
+    font-weight: 500;
+}
+.dummy_text {
+    width: 100%;
+    float: left;
+    font-size: 16px;
+    color: #545455;
+    margin-left: 0px;
+}
+
+.works_section{
+    width: 100%;
+    float: left;
+    position: relative;
+  }
+
+  .work_taital {
+    width: 100%;
+    float: left;
+    font-size: 36px;
+    color: #030000;
+    font-weight: 600;
+}
+.works_section_2{
+  width: 100%;
+  float: left;
+
+}
+.works_section:after {
+    content: '';
+    position: absolute;
+    height: 245px;
+    width: 400px;
+    top: -30px;
+    background-image: url(../images/img-9.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    left: 0;
+}
+
+.fully_text{
+    margin-top: 0.5em;
+    width: 100%;
+    float: left;
+    font-size: 20px;
+    color: #171717;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .lorem_text {
+      width: 100%;
+      float: left;
+      font-size: 16px;
+      color: #5c5c5c;
+      margin-left: 0px;
+      margin-top: 0px;
+  }
+
+  .info_img{
+    margin: 1em;
+  }

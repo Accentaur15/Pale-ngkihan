@@ -1,6 +1,6 @@
- /* *{
+ *{
     border: 1px solid red;
-}   */
+} 
 
 
 @media (prefers-reduced-motion: no-preference) {
@@ -84,7 +84,7 @@ header{
 
   .copyright {
     background-color: #678A71;
-    position: static;
+    
   }
 
   .services_section{
@@ -188,10 +188,6 @@ header{
     transition: ease all 0.5s;
 }
 
-html {
-    scroll-behavior: smooth;
-    overflow-x: hidden !important;
-}
 
 body {
     color: #666666;
@@ -285,7 +281,7 @@ ol {
 }
 
 p {
-    margin: 20px;
+    
     font-weight: 300;
     font-size: 15px;
     line-height: 24px;

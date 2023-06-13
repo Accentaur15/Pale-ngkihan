@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Buyer Registration</title>
+    <title>Seller Registration</title>
 
         <!--css-->
-        <link href="/registerbuyer.css" rel="stylesheet">
+        <link href="/seller/sellerregistration.css" rel="stylesheet">
         <!--fontawesome-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
         <!--bootstrap-->
@@ -67,7 +67,7 @@
             <div class="row g-0">
               <div class="col-lg-6" style="background: #F3EFE2;">
                 <div class="p-5">
-                  <h1 class="fw-bolder mb-3">Create Buyer Account</h1>
+                  <h1 class="fw-bolder mb-3">Create Seller Account</h1>
 
                   <hr class="mx-n3">
 
@@ -75,24 +75,25 @@
 
                     <div class="col-md-6 mb-4 pb-2">
                       <div class="form-outline">
-                        <label class="form-label" for="form3Example1m1" style="font-weight: bold;">First Name</label>
-                        <input type="text" id="name" class="form-control form-control-md"/>
+                        <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Shop name</label>
+                        <input type="text" id="shopname" class="form-control form-control-md"/>
                       </div>
                     </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                         <div class="form-outline">
-                            <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Middle Name</label>
-                          <input type="text" id="name" class="form-control form-control-md fst-italic" placeholder="optional"/>
+                            <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Username</label>
+                          <input type="text" id="username" class="form-control form-control-md fst-italic"/>
                         </div>
                       </div>
 
-                    <div class="col-md-6 mb-4 pb-2">
-                      <div class="form-outline">
-                        <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Last Name</label>
-                        <input type="text" id="lastname" class="form-control form-control-md"/>
+                      <div class="mb-4 pb-2">
+                        <div class="form-outline">
+                            <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Shop Owner Full name</label>
+                          <input type="text" id="form3Examplev4" class="form-control form-control-md"/>
+                        </div>
                       </div>
-                    </div>
+
                   </div>
 
                   <div class="col-md-6 mb-4">
@@ -140,6 +141,7 @@
                     </div>
                   </div>
 
+
                   <div class="row">
                     <div class="col-md-6 mb-4 pb-2">
                         <i class="fa-sharp fa-solid fa-lock"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Password</label>
@@ -162,7 +164,60 @@
               </div>
               <div class="col-lg-6 bg-indigo text-black fw-bold">
                 <div class="p-5">
-                  <h3 class="fw-bold mb-2 mt-5">Proof of Details</h3>
+
+                    <h4 class="fw-bold mb-2 mt-5">Additional Information</h4>
+
+                    <hr class="mx-n3">
+
+                    <div class="input-group mb-4 pb-2">
+                        <label class="input-group-text" for="inputGroupSelect01">Do you have a Physical Store?</label>
+                        <select class="form-select" id="inputGroupSelect01">
+                          <option selected>Choose...</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+
+
+            <div id="showpermit">
+
+                      <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+                            
+                           <div class="text-center mb-2"></div>
+                          <h6 class="mb-1 fw-bold text-center">Business Permit</h6>
+          
+                        </div>
+                        <div class="col-md-9 pe-5">
+          
+                          <input class="form-control form-control-sm" id="formFileLg" type="file" />
+                          <div class="small text-muted mt-2">Upload your Business Permit. Max file
+                            size 30 MB</div>
+          
+                        </div>
+                      </div>
+
+                      <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+                            
+                           <div class="text-center mb-2"></div>
+                          <h6 class="mb-1 fw-bold text-center">DTI Permit</h6>
+          
+                        </div>
+                        <div class="col-md-9 pe-5">
+          
+                          <input class="form-control form-control-sm" id="formFileLg" type="file" />
+                          <div class="small text-muted mt-2">Upload your DTI Permit. Max file
+                            size 30 MB</div>
+          
+                        </div>
+                      </div>
+
+            </div>
+
+                    <hr class="mx-n3">
+
+                  <h4 class="fw-bold mb-2 mt-5">Proof of Details</h4>
 
                   <hr class="mx-n3">
 
@@ -188,13 +243,13 @@
                     <div class="col-md-3 ps-5">
                         
                         <div class="text-center mb-2"> <i class="fa-solid fa-circle-user fa-2xl"></i></div>
-                      <h6 class="mb-1 fw-bold text-center">Profile Picture</h6>
+                      <h6 class="mb-1 fw-bold text-center">Shop Logo</h6>
       
                     </div>
                     <div class="col-md-9 pe-5">
       
                       <input class="form-control form-control-sm" id="formFileLg" type="file" />
-                      <div class="small text-muted mt-2">Upload your Profile Picture. Max file
+                      <div class="small text-muted mt-2">Upload your Shop Logo. Max file
                         size 30 MB</div>
       
                     </div>

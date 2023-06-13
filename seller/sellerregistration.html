@@ -155,7 +155,7 @@
 
                  </div>
                   
-                 <button type="button" class="btn btn-lg text-white" style="background: #6BB25A;">Register</button>
+                 <button type="button" class="btn btn-lg text-white w-100" style="background: #6BB25A;">Register</button>
                
 
               
@@ -171,10 +171,10 @@
 
                     <div class="input-group mb-4 pb-2">
                         <label class="input-group-text" for="inputGroupSelect01">Do you have a Physical Store?</label>
-                        <select class="form-select" id="inputGroupSelect01">
+                        <select class="form-select" id="inputGroupSelect01" onchange="showDiv(this)">
                           <option selected>Choose...</option>
-                          <option value="Yes">Yes</option>
                           <option value="No">No</option>
+                          <option value="Yes">Yes</option>
                         </select>
                       </div>
 
@@ -213,7 +213,33 @@
                         </div>
                       </div>
 
+                      <div class="row align-items-center py-3">
+                        <div class="col-md-3 ps-5">
+                            
+                           <div class="text-center mb-2"></div>
+                          <h6 class="mb-1 fw-bold text-center">Mayor's Permit</h6>
+          
+                        </div>
+                        <div class="col-md-9 pe-5">
+          
+                          <input class="form-control form-control-sm" id="formFileLg" type="file" />
+                          <div class="small text-muted mt-2">Upload your Mayor's Permit. Max file
+                            size 30 MB</div>
+          
+                        </div>
+                      </div>
+
             </div>
+
+            <script type="text/javascript">
+                function showDiv(select){
+                   if(select.value.localeCompare("No")){
+                    document.getElementById('showpermit').style.display = "block";
+                   } else{
+                    document.getElementById('showpermit').style.display = "none";
+                   }
+                } 
+                </script>
 
                     <hr class="mx-n3">
 
@@ -226,15 +252,15 @@
                         
                        <div class="text-center mb-2"> <i class="fa-solid fa-id-card fa-2xl"></i></div>
                       <h6 class="mb-1 fw-bold text-center">Valid I.D</h6>
-      
                     </div>
+
                     <div class="col-md-9 pe-5">
       
                       <input class="form-control form-control-sm" id="formFileLg" type="file" />
                       <div class="small text-muted mt-2">Upload your Valid Identification (I.D). Max file
                         size 30 MB</div>
-      
                     </div>
+                    
                   </div>
 
                   <hr class="mx-n3">

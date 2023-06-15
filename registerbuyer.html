@@ -1,3 +1,19 @@
+<?php 
+
+@include 'config.php'
+
+if(isset($_POST['submit'])){
+
+  $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
+  $middlename = mysqli_real_escape_string($conn, $_POST['middlename']);
+  $lastname = mysqli_real_escape_string($conn, $_POST['lastname']);
+  $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
+
+};
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +79,8 @@
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
         <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+
+<form action="" method="post">
           <div class="card-body p-0">
             <div class="row g-0">
               <div class="col-lg-6" style="background: #F3EFE2;">
@@ -75,22 +93,22 @@
 
                     <div class="col-md-6 mb-4 pb-2">
                       <div class="form-outline">
-                        <label class="form-label" for="form3Example1m1" style="font-weight: bold;">First Name</label>
-                        <input type="text" id="name" class="form-control form-control-md"/>
+                        <label class="form-label" for="firstname" style="font-weight: bold;">First Name</label>
+                        <input type="text" id="firstname" name="firstname" class="form-control form-control-md" required pattern="[a-zA-Z'-'\s]*"/>
                       </div>
                     </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                         <div class="form-outline">
-                            <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Middle Name</label>
-                          <input type="text" id="name" class="form-control form-control-md fst-italic" placeholder="optional"/>
+                            <label class="form-label" for="middlename" style="font-weight: bold;">Middle Name</label>
+                          <input type="text" id="middlename" name="middlename" class="form-control form-control-md fst-italic" placeholder="optional"/>
                         </div>
                       </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                       <div class="form-outline">
-                        <label class="form-label" for="form3Example1m1" style="font-weight: bold;">Last Name</label>
-                        <input type="text" id="lastname" class="form-control form-control-md"/>
+                        <label class="form-label" for="lastname" style="font-weight: bold;">Last Name</label>
+                        <input type="text" id="lastname" name="lastname" class="form-control form-control-md" required pattern="[a-zA-Z'-'\s]*"/>
                       </div>
                     </div>
                   </div>
@@ -98,62 +116,50 @@
                   <div class="col-md-6 mb-4">
 
                      <h5 class="mb-2 pb-1"><i class="fa-solid fa-venus-mars"></i>&nbsp;Gender:</h5>
-  
-                    <div class="form-check form-check-inline ms-2">
-                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="femaleGender"
-                        value="option1" checked />
-                      <label class="form-check-label fw-bold" for="femaleGender">Male</label>
-                    </div>
-  
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="maleGender"
-                        value="option2" />
-                      <label class="form-check-label fw-bold" for="maleGender">Female</label>
-                    </div>
-  
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="otherGender"
-                        value="option3" />
-                      <label class="form-check-label fw-bold" for="otherGender">Other</label>
-                    </div>
+
+
+                     <select type="text" id="gender" name="gender" class="form-control form-control-md form-control-border select2" required>
+                      <option>Male</option>
+                      <option>Female</option>
+                  </select>
   
                   </div>
 
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
-                        <i class="fa-regular fa-address-book"></i><label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Contact Number</label>
-                      <input type="number" id="form3Examplev4" class="form-control form-control-md"/>
+                        <i class="fa-regular fa-address-book"></i><label class="form-label" for="contactnumber" style="font-weight: bold;">&nbsp;Contact Number</label>
+                      <input id="contactnumber" name="contactnumber" type="tel" class="form-control form-control-md" required pattern="[0-9]{11}" oninvalid="this.setCustomValidty('Enter 11 Digits Number')" oninput="this.setCustomValidty"/>
                     </div>
                   </div>
 
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
-                        <i class="fa-solid fa-location-dot"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Address</label>
-                      <input type="text" id="form3Examplev4" class="form-control form-control-md"/>
+                        <i class="fa-solid fa-location-dot"></i> <label class="form-label" for="address" style="font-weight: bold;">&nbsp;Address</label>
+                      <input id="address" name="address" type="text" class="form-control form-control-md"/>
                     </div>
                   </div>
 
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
-                        <i class="fa-regular fa-envelope"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Email Address</label>
-                      <input type="email" id="form3Examplev4" class="form-control form-control-md"/>
+                        <i class="fa-regular fa-envelope"></i> <label class="form-label" for="email" style="font-weight: bold;">&nbsp;Email Address</label>
+                      <input id="email" name="email" type="email" class="form-control form-control-md"/>
                     </div>
                   </div>
 
                   <div class="row">
                     <div class="col-md-6 mb-4 pb-2">
-                        <i class="fa-sharp fa-solid fa-lock"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Password</label>
-                    <input type="password" id="form3Example4cg" class="form-control form-control-md" />
+                        <i class="fa-sharp fa-solid fa-lock"></i> <label class="form-label" for="password style="font-weight: bold;">&nbsp;Password</label>
+                    <input id="password" name="password" type="password" class="form-control form-control-md" />
                     </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                         <i class="fa-solid fa-key"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Confirm Password</label>
-                        <input type="password" id="form3Example4cg" class="form-control form-control-md" />
+                        <input type="password" id="cpassword" class="form-control form-control-md" />
                         </div>
 
                  </div>
                   
-                 <button type="button" class="btn btn-lg text-white w-100 mb-3" style="background: #6BB25A;">Register</button>
+                 <button type="submit" name="submit" class="btn btn-lg text-white w-100 mb-3" style="background: #6BB25A;">Register</button>
                  
                  <div class="d-flex align-items-center justify-content-center pb-4">
                   <p class="mb-0 me-2">Already have an account?</p>
@@ -211,6 +217,9 @@
               </div>
             </div>
           </div>
+
+</form>
+
         </div>
       </div>
     </div>

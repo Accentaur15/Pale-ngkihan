@@ -1,15 +1,4 @@
-<?php 
-
-@include 'config.php'
-
-if(isset($_POST['submit'])){
-
-  $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
-  $middlename = mysqli_real_escape_string($conn, $_POST['middlename']);
-  $lastname = mysqli_real_escape_string($conn, $_POST['lastname']);
-  $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
-
-};
+<?php require_once('./config.php')
 
 ?>
 
@@ -20,7 +9,8 @@ if(isset($_POST['submit'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Buyer Registration</title>
-
+        <!--Jquery-->
+        <script src="/jQuery/jQuery v3.7.0.js"></script>
         <!--css-->
         <link href="/registerbuyer.css" rel="stylesheet">
         <!--fontawesome-->
@@ -80,7 +70,7 @@ if(isset($_POST['submit'])){
       <div class="col-12">
         <div class="card card-registration card-registration-2" style="border-radius: 15px;">
 
-<form action="" method="post">
+<form action="" method="post" class="was-validated" novalidate>
           <div class="card-body p-0">
             <div class="row g-0">
               <div class="col-lg-6" style="background: #F3EFE2;">
@@ -95,13 +85,19 @@ if(isset($_POST['submit'])){
                       <div class="form-outline">
                         <label class="form-label" for="firstname" style="font-weight: bold;">First Name</label>
                         <input type="text" id="firstname" name="firstname" class="form-control form-control-md" required pattern="[a-zA-Z'-'\s]*"/>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                          Please Enter your First Name.
+                        </div>
                       </div>
                     </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                         <div class="form-outline">
                             <label class="form-label" for="middlename" style="font-weight: bold;">Middle Name</label>
-                          <input type="text" id="middlename" name="middlename" class="form-control form-control-md fst-italic" placeholder="optional"/>
+                          <input type="text" id="middlename" name="middlename" class="form-control form-control-md" placeholder="(optional)"/>
                         </div>
                       </div>
 
@@ -109,6 +105,12 @@ if(isset($_POST['submit'])){
                       <div class="form-outline">
                         <label class="form-label" for="lastname" style="font-weight: bold;">Last Name</label>
                         <input type="text" id="lastname" name="lastname" class="form-control form-control-md" required pattern="[a-zA-Z'-'\s]*"/>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                          Please Enter your Last Name.
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -118,7 +120,7 @@ if(isset($_POST['submit'])){
                      <h5 class="mb-2 pb-1"><i class="fa-solid fa-venus-mars"></i>&nbsp;Gender:</h5>
 
 
-                     <select type="text" id="gender" name="gender" class="form-control form-control-md form-control-border select2" required>
+                     <select type="text" id="gender" name="gender" class="form-select form-select-md form-select-border select2" required>
                       <option>Male</option>
                       <option>Female</option>
                   </select>
@@ -128,33 +130,64 @@ if(isset($_POST['submit'])){
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
                         <i class="fa-regular fa-address-book"></i><label class="form-label" for="contactnumber" style="font-weight: bold;">&nbsp;Contact Number</label>
-                      <input id="contactnumber" name="contactnumber" type="tel" class="form-control form-control-md" required pattern="[0-9]{11}" oninvalid="this.setCustomValidty('Enter 11 Digits Number')" oninput="this.setCustomValidty"/>
+                      <input id="contactnumber" name="contactnumber" type="tel" class="form-control form-control-md" required pattern="[0-9]{11}"/>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                        Enter 11 Digits Number.
+                      </div>
                     </div>
                   </div>
+
 
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
                         <i class="fa-solid fa-location-dot"></i> <label class="form-label" for="address" style="font-weight: bold;">&nbsp;Address</label>
-                      <input id="address" name="address" type="text" class="form-control form-control-md"/>
+                      <input id="address" name="address" type="text" class="form-control form-control-md" required pattern="[a-zA-Z'-'\s]*"/>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                        Please Enter your Address
+                      </div>
                     </div>
                   </div>
 
                   <div class="mb-4 pb-2">
                     <div class="form-outline">
                         <i class="fa-regular fa-envelope"></i> <label class="form-label" for="email" style="font-weight: bold;">&nbsp;Email Address</label>
-                      <input id="email" name="email" type="email" class="form-control form-control-md"/>
+                      <input id="email" name="email" type="email" class="form-control form-control-md" required/>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                        Please Enter your Email Address
+                      </div>
                     </div>
                   </div>
 
                   <div class="row">
                     <div class="col-md-6 mb-4 pb-2">
-                        <i class="fa-sharp fa-solid fa-lock"></i> <label class="form-label" for="password style="font-weight: bold;">&nbsp;Password</label>
-                    <input id="password" name="password" type="password" class="form-control form-control-md" />
+                        <i class="fa-sharp fa-solid fa-lock"></i> <label class="form-label" for="password" style="font-weight:bold;">&nbsp;Password</label>
+                    <input id="password" name="password" type="password" class="form-control form-control-md" required/>
+                    <div class="valid-feedback">
+                      Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                      Please Enter your Password
+                    </div>
                     </div>
 
                     <div class="col-md-6 mb-4 pb-2">
                         <i class="fa-solid fa-key"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Confirm Password</label>
-                        <input type="password" id="cpassword" class="form-control form-control-md" />
+                        <input type="password" id="cpassword" class="form-control form-control-md" required/>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                          Please Confirm your Password
+                        </div>
                         </div>
 
                  </div>
@@ -169,6 +202,9 @@ if(isset($_POST['submit'])){
 
                 </div>
               </div>
+</form>
+
+<form>
               <div class="col-lg-6 bg-indigo text-black fw-bold">
                 <div class="p-5">
                   <h3 class="fw-bold mb-2 mt-5">Proof of Details</h3>
@@ -183,13 +219,26 @@ if(isset($_POST['submit'])){
       
                     </div>
                     <div class="col-md-9 pe-5">
+
+                    <div class="row  mb-2 mx-auto d-block text-center">
+                        <div class="form-group col-md-6 text-center">
+                            <img src="<?= validate_image('') ?>" alt="Valid I.D" id="vidimg" class="border border-gray img-thumbnail">
+                        </div>
+                    </div>
       
-                      <input class="form-control form-control-sm" id="formFileLg" type="file" />
+                      <input class="form-control form-control-sm" id="formFileLg" type="file" required/>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                        Please Upload your Valid I.D
+                      </div>
                       <div class="small text-muted mt-2">Upload your Valid Identification (I.D). Max file
                         size 30 MB</div>
       
                     </div>
                   </div>
+                  
 
                   <hr class="mx-n3">
 
@@ -201,8 +250,20 @@ if(isset($_POST['submit'])){
       
                     </div>
                     <div class="col-md-9 pe-5">
+
+                      <div class="row  mb-2 mx-auto d-block text-center">
+                        <div class="form-group col-md-6 text-center">
+                            <img src="<?= validate_image('') ?>" alt="Valid I.D" id="profileimg" class="border border-gray img-thumbnail">
+                        </div>
+                    </div>
       
-                      <input class="form-control form-control-sm" id="formFileLg" type="file" />
+                      <input class="form-control form-control-sm" id="formFileLg" type="file" required onchange="displayImg(this,$(this))" accept="image/png, image/jpeg"/>
+                      <div class="valid-feedback">
+                        Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                        Please Upload your Profile Picture
+                      </div>
                       <div class="small text-muted mt-2">Upload your Profile Picture. Max file
                         size 30 MB</div>
       
@@ -231,6 +292,29 @@ if(isset($_POST['submit'])){
        <div class="copyright py-4 text-center text-white d-flex p-2">
         <div class="container"><small>Copyright &copy; Pale-ngkihan 2023</small></div>
     </div>
+
+
+    <!--Javascript-->
+    <script>
+    
+    function displayImg(input,_this) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	        	$('#cimg').attr('src', e.target.result);
+	        }
+
+	        reader.readAsDataURL(input.files[0]);
+	    }else{
+	        	$('#cimg').attr('src', '<?= validate_image('') ?>');
+        }
+	}
+  
+  </script>
+    
+
+    <!--End of Javascript-->
+
 
        <!--Animation java-->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

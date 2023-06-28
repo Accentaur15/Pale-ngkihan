@@ -30,7 +30,7 @@ $dtipermit = isset($_FILES['dtipermit']) ? $_FILES['dtipermit'] : '';
 $mayorspermit = isset($_FILES['mayorspermit']) ? $_FILES['mayorspermit'] : '';
 $validIdFile = $_FILES['validid'];
 $shoplogo = $_FILES['shoplogo'];
-$userproperFolder = 'seller_profiles/' . $random_id . '/';
+
 
 // Checking if all required fields are not empty
 if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gender) && !empty($cnumber) && !empty($address) && !empty($email) && !empty($password) && !empty($cpassword) && !empty($ispstore) && !empty($validIdFile) && !empty($shoplogo)) {
@@ -79,6 +79,7 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                                     if (strpos($validIdType, 'image') !== false) {
                                         // Create a unique folder for each user
                                         $userFolder = '../seller_profiles/' . $random_id . '/';
+                                        $userproperFolder = 'seller_profiles/' . $random_id . '/';
                                         if (!file_exists($userFolder)) {
                                             mkdir($userFolder, 0777, true);
                                         }
@@ -111,7 +112,8 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                                     // Check if the uploaded file is an image
                                     if (strpos($shoplogoType, 'image') !== false) {
                                         // Create a unique folder for each user
-                                        $userFolder = '../seller_profiles/' . $email . '/';
+                                        $userFolder = '../seller_profiles/' . $random_id . '/';
+                                        $userproperFolder = 'seller_profiles/' . $random_id . '/';
 
 
                                         // Generate a unique name for the shop logo
@@ -143,10 +145,8 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                                                     // Check if the uploaded file is an image
                                                     if (strpos($businessPermitType, 'image') !== false) {
                                                         // Create a unique folder for each user
-                                                        $userFolder = '../seller_profiles/' . $email . '/';
-                                                        if (!file_exists($userFolder)) {
-                                                            mkdir($userFolder, 0777, true);
-                                                        }
+                                                        $userFolder = '../seller_profiles/' . $random_id . '/';
+                                                        $userproperFolder = 'seller_profiles/' . $random_id . '/';
 
                                                         // Generate a unique name for the business permit
                                                         $businessPermitExtension = pathinfo($businessPermitName, PATHINFO_EXTENSION);
@@ -172,6 +172,8 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
 
                                                     // Check if the uploaded file is an image
                                                     if (strpos($dtiPermitType, 'image') !== false) {
+                                                        $userFolder = '../seller_profiles/' . $random_id . '/';
+                                                        $userproperFolder = 'seller_profiles/' . $random_id . '/';
                                                         // Generate a unique name for the DTI permit
                                                         $dtiPermitExtension = pathinfo($dtiPermitName, PATHINFO_EXTENSION);
                                                         $newDtiPermitName = 'dtipermit.' . $dtiPermitExtension;
@@ -196,6 +198,8 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
 
                                                     // Check if the uploaded file is an image
                                                     if (strpos($mayorsPermitType, 'image') !== false) {
+                                                        $userFolder = '../seller_profiles/' . $random_id . '/';
+                                                        $userproperFolder = 'seller_profiles/' . $random_id . '/';
                                                         // Generate a unique name for the mayor's permit
                                                         $mayorsPermitExtension = pathinfo($mayorsPermitName, PATHINFO_EXTENSION);
                                                         $newMayorsPermitName = 'mayorspermit.' . $mayorsPermitExtension;
@@ -216,30 +220,6 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                                                 $mayorsPermitDestination = null;
                                             }
 
-
-                // Get the current year, month, and date
-                $currentYear = date('Y');
-                $currentMonth = date('m');
-                $currentDate = date('d');
-
-                // Fetch the last registered user ID from the database
-                $query = "SELECT unique_id FROM seller_accounts ORDER BY unique_id DESC LIMIT 1";
-                $result = mysqli_query($conn, $query);
-
-                if (mysqli_num_rows($result) > 0) {
-                    $lastUserId = mysqli_fetch_assoc($result)['unique_id'];
-                    // Extract the number increment from the last user ID
-                    $lastIncrement = explode('-', $lastUserId)[1];
-
-                    // Generate the new increment by incrementing the last increment value
-                    $newIncrement = $lastIncrement + 1;
-                } else {
-                    // This is the first user being registered
-                    $newIncrement = 1;
-                }
-
-                // Create the new unique user ID in the format: s-year-month-date-increment
-                $random_id = 'S-' . $currentYear . '-' . $currentMonth . '-' . $currentDate . '-' . $newIncrement;
                 // Insert data into the table
                 $insertQuery = "INSERT INTO seller_accounts (unique_id, username, shop_name, shop_owner, gender, contact, address, email, password, has_pstore, business_permit, dti_permit, mayors_permit, valid_id, shop_logo, status, delete_flag, date_updated) VALUES ('{$random_id}','{$username}', '{$shopname}', '{$shopowner}', '{$gender}', '{$cnumber}', '{$address}', '{$email}', '{$password}', '{$ispstore}', '{$businessPermitDestination}', '{$dtiPermitDestination}', '{$mayorsPermitDestination}', '{$validIdDestination}', '{$shoplogoDestination}', '{$status}', '{$delete_flag}', NULL)";
 

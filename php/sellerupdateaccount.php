@@ -38,7 +38,8 @@ $existingValidId = $row['valid_id'];
 $existingdtipermit = $row['dti_permit'];
 $existingbusinesspermit = $row['business_permit'];
 $existingmayorspermit = $row['mayors_permit'];
-
+$userFolder = '../seller_profiles/' . $unique_id . '/';
+$userproperFolder = 'seller_profiles/' . $unique_id . '/';
 
 
     if($oldpassword == $currentPassword){
@@ -50,7 +51,7 @@ $existingmayorspermit = $row['mayors_permit'];
                 $updatepassword = "UPDATE seller_accounts SET password = '{$password}' WHERE unique_id = '{$unique_id}'";
                 if (mysqli_query($conn, $updatepassword)) {
                     // Update successful
-                    echo "Password Updated";
+                    echo "Password updated";
                 } else {
                     echo "Error: " . mysqli_error($conn);
                 }
@@ -80,12 +81,12 @@ $existingmayorspermit = $row['mayors_permit'];
                     // Generate a unique name for the profile picture
                     $validIdExtension = pathinfo($validIdName, PATHINFO_EXTENSION);
                     $newValidIdName = 'validid.' . $validIdExtension;
-                    $userFolder = '../seller_profiles/' . $email . '/';
+                    $userFolder = '../seller_profiles/' . $unique_id . '/';
                     $validIdDestination = $userFolder . $newValidIdName;
 
 
                     // Move the uploaded profile picture to the user's folder
-                    move_uploaded_file($validIdTmpName, $validIdDestination2);
+                    move_uploaded_file($validIdTmpName, $validIdDestination);
                     echo "Profile picture updated.";
                 } else {
                     echo "Valid ID must be an image file.";
@@ -138,12 +139,13 @@ $existingmayorspermit = $row['mayors_permit'];
 
                         // Generate a unique name for the business permit
                         $businessPermitExtension = pathinfo($businessPermitName, PATHINFO_EXTENSION);
-                        $newBusinessPermitName = 'bpermit.' . $businessPermitExtension;
+                        $newBusinessPermitName = 'businesspermit.' . $businessPermitExtension;
                         $businessPermitDestination = $userFolder . $newBusinessPermitName;
+                        $businessPermitDestination2 = $userproperFolder . $newBusinessPermitName;
 
                         // Move the uploaded business permit to the user's folder
                         move_uploaded_file($businessPermitTmpName, $businessPermitDestination);
-                        $updateQuery = "UPDATE seller_accounts SET business_permit = '{$businessPermitDestination}' WHERE unique_id = '{$unique_id}'";
+                        $updateQuery = "UPDATE seller_accounts SET business_permit = '{$businessPermitDestination2}' WHERE unique_id = '{$unique_id}'";
                         if (mysqli_query($conn, $updateQuery)) {
                             // Update successful
                             echo "Business permit updated.";
@@ -174,10 +176,11 @@ $existingmayorspermit = $row['mayors_permit'];
                         $dtiPermitExtension = pathinfo($dtiPermitName, PATHINFO_EXTENSION);
                         $newDTIPermitName = 'dtipermit.' . $dtiPermitExtension;
                         $dtiPermitDestination = $userFolder . $newDTIPermitName;
+                        $dtiPermitDestination2 = $userproperFolder . $newDTIPermitName;
 
                         // Move the uploaded DTI permit to the user's folder
                         move_uploaded_file($dtiPermitTmpName, $dtiPermitDestination);
-                        $updateQuery = "UPDATE seller_accounts SET dti_permit = '{$dtiPermitDestination}' WHERE unique_id = '{$unique_id}'";
+                        $updateQuery = "UPDATE seller_accounts SET dti_permit = '{$dtiPermitDestination2}' WHERE unique_id = '{$unique_id}'";
                         if (mysqli_query($conn, $updateQuery)) {
                             // Update successful
                             echo "DTI permit updated.";
@@ -208,10 +211,11 @@ $existingmayorspermit = $row['mayors_permit'];
                         $mayorsPermitExtension = pathinfo($mayorsPermitName, PATHINFO_EXTENSION);
                         $newMayorsPermitName = 'mayorspermit.' . $mayorsPermitExtension;
                         $mayorsPermitDestination = $userFolder . $newMayorsPermitName;
+                        $mayorsPermitDestination2 = $userproperFolder . $newMayorsPermitName;
 
                         // Move the uploaded mayor's permit to the user's folder
                         move_uploaded_file($mayorsPermitTmpName, $mayorsPermitDestination);
-                         $updateQuery = "UPDATE seller_accounts SET mayors_permit = '{$mayorsPermitDestination}' WHERE unique_id = '{$unique_id}'";
+                         $updateQuery = "UPDATE seller_accounts SET mayors_permit = '{$mayorsPermitDestination2}' WHERE unique_id = '{$unique_id}'";
                         if (mysqli_query($conn, $updateQuery)) {
                             // Update successful
                             echo "Mayor's permit updated.";
@@ -230,7 +234,7 @@ $existingmayorspermit = $row['mayors_permit'];
 
             if (mysqli_query($conn, $updateQuery)) {
                 // Update successful
-                echo "Account Updated";
+                echo "Account updated";
             } else {
                 echo "Error: " . mysqli_error($conn);
             }

@@ -500,11 +500,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
                         let data = xhr.response.trim(); // Trim whitespace from the response
-                        let comparisonResult = data === "success";
+                        let comparisonResult = data.includes("updated");
                         if (comparisonResult) {
-                            //location.href = "../seller/selleraccount.php";
                             errorText.textContent = data;
                             errorText.style.display = "block";
+                            setTimeout(function() {
+                            location.reload(true);
+                            }, 3000);
                         } else {
                             errorText.textContent = data;
                             errorText.style.display = "block";

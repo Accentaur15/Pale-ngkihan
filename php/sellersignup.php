@@ -30,7 +30,7 @@ $dtipermit = isset($_FILES['dtipermit']) ? $_FILES['dtipermit'] : '';
 $mayorspermit = isset($_FILES['mayorspermit']) ? $_FILES['mayorspermit'] : '';
 $validIdFile = $_FILES['validid'];
 $shoplogo = $_FILES['shoplogo'];
-$userproperFolder = 'seller_profiles/' . $email . '/';
+$userproperFolder = 'seller_profiles/' . $random_id . '/';
 
 // Checking if all required fields are not empty
 if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gender) && !empty($cnumber) && !empty($address) && !empty($email) && !empty($password) && !empty($cpassword) && !empty($ispstore) && !empty($validIdFile) && !empty($shoplogo)) {

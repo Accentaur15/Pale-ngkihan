@@ -39,7 +39,7 @@ img.logo{
 }
 
 header{
-    background-image: url(/Assets/images/aboutusheading.jpg);
+    background-image: url(Assets/images/aboutusheading.jpg);
   background-size:  cover;
 }
 
@@ -154,7 +154,7 @@ header{
     height: 245px;
     width: 400px;
     top: -30px;
-    background-image: url(../images/img-9.png);
+    background-image: url(images/img-9.png);
     background-size: 100%;
     background-repeat: no-repeat;
     left: 0;

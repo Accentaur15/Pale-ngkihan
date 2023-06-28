@@ -73,7 +73,7 @@ if (!empty($fname) && !empty($mname) && !empty($lname) && !empty($gender) && !em
                     // Check if the uploaded file is an image
                     if (strpos($profilePictureType, 'image') !== false) {
                         // Create a unique folder for each user
-                        $userFolder = '../buyer_profiles/' . $email . '/';
+                        $userFolder = '../buyer_profiles/' . $random_id . '/';
                         if (!file_exists($userFolder)) {
                             mkdir($userFolder, 0777, true);
                         }

@@ -15,7 +15,8 @@
     <li class="nav-item">
 
         <button type="button" class="btn btn-rounded badge dropdown-toggle dropdown-icon my-auto" data-toggle="dropdown" aria-expanded="false">
-          <span><img src="../<?php echo $shoplogo; ?>" class="avatar-image img-fluid" alt="User Image"></span>
+          <span><img src="../<?php echo $shoplogo; ?>" class="avatar-image img-fluid" alt="User Image" style="width: 3em; height: 3em; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+</span>
           <span class="ml-1" style="font-size: 14px;"><?php echo $shopname; ?></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>

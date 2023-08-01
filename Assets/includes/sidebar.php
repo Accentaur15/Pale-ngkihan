@@ -39,7 +39,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="../seller/orderlist.php" class="nav-link">
               <i class="nav-icon fas fa-clipboard-list"></i>
               <p>
                 Order List
@@ -47,8 +47,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-filter"></i>
+            <a href="../seller/categorylistseller.php" class="nav-link">
+            <i class="nav-icon fas fa-filter"></i>
               <p>
                 Category List
               </p>
@@ -56,10 +56,10 @@
           </li>
           <li class="nav-header">Reports</li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="../seller/monthlyorderreport.php" class="nav-link">
               <i class="nav-icon fas fa-chart-line"></i>
               <p>
-                Monthly Order
+                Monthly Order Report
               </p>
             </a>
           </li>

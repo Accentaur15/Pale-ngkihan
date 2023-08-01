@@ -2,6 +2,7 @@
 
 session_start();
 include_once('../php/config.php');
+include_once('../php/cart_functions.php'); 
 $unique_id = $_SESSION['unique_id'];
 
 if (empty($unique_id)) {
@@ -13,7 +14,21 @@ $select = mysqli_query($conn, "SELECT * FROM buyer_accounts WHERE unique_id = '{
   $fetch = mysqli_fetch_assoc($select);
   }
 
+  $qry = mysqli_query($conn, "SELECT * FROM buyer_accounts WHERE unique_id = '{$unique_id}'");
 
+if (mysqli_num_rows($qry) > 0) {
+    $row = mysqli_fetch_assoc($qry);
+    if ($row) {
+      $fname = $row['first_name'];
+      $lname = $row['last_name'];
+      $email = $row['email'];
+      $profilePicture = $row['profile_picture'];
+      $id = $row['id'];
+    }
+}
+
+  $cartItemCount = getCartItemCount($conn, $id);
+  include_once('../php/notifications.php'); 
 ?>
 
 <!DOCTYPE html>
@@ -21,81 +36,84 @@ $select = mysqli_query($conn, "SELECT * FROM buyer_accounts WHERE unique_id = '{
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Update Buyer Account - Pale-ngkihan</title>
+    <title>Buyer | My Cart</title>
 </head>
-    <!--css-->
-    <link href="buyermyaccount.css" rel="stylesheet">
-    <!--fontawesome-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <!--bootstrap-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <!--title icon-->
-    <link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
-    <link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
-    <link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
-    <!--Animation-->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="../Assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="../Assets/plugins/fontawesome-free/css/all.min.css">
+<script src="https://kit.fontawesome.com/0ad1512e05.js" crossorigin="anonymous"></script>
+<!-- Theme style -->
+<link rel="stylesheet" href="../Assets/dist/css/adminlte.min.css">
+<!--css-->
+<link href="buyermyaccount.css" rel="stylesheet">
+<!--fontawesome-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
+<!--Animation-->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+<!--Navigation Bar-->
+<nav class="navbar navbar-expand-md navbar-light" style="background: rgb(229, 235, 232);">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+            <img src="../Assets/logo/Artboard 1.png" class="logo">
+        </a>
 
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <i class="fas fa-bars"></i>
+        </button>
 
- <!--primary navbar-->
- 
-        
- <nav class="navbar navbar-light navbar-expand-sm" style=" background: rgb(229, 235, 232);">
-            <div class="container-fluid">
-              <ul class="navbar-nav ms-auto justify-content-end">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link mx-3" aria-current="page" href="buyermain.php">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/marketplace.php">Marketplace</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="#">My Orders</a>
+                </li>
+  <?php include('../Assets/includes/notification.php');?>
+                <li class="nav-item">
+                    <a class="nav-link active mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
                     <?php
-                        echo '<img src="../' . $fetch['profile_picture'] . '" alt="Profile Picture" class="avatar-image img-fluid">';
-                        echo $fetch['first_name'] . ' ' . $fetch['last_name'];
-                    ?>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <li><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
-                    <li><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id?>">Log out</a></li>
-                </ul>
-            </li>
-              </ul>
-            </div>
-          </nav>
-      
-
-
-            
-
-
-    <!--end of primary navbar-->
-    <!--Navigation Bar-->
-    <nav class="navbar navbar-expand-md bg-light ">
-  <div class="container-fluid">
-  <a class="navbar-brand" href="index.html">
-                <img src="../Assets/logo/Artboard 1.png" class="logo">
-              </a>
-
-        
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#buton">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="buton">
-      <ul class="navbar-nav text-center">
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="buyermain.php">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#">Marketplace</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#">My Orders</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
-        </li>
-      </ul>
+                      if ($cartItemCount > 0) {
+                          echo '<span class="badge bg-success position-absolute top-0 end-0">' . $cartItemCount . '</span>';
+                      }
+                      ?>
+                  </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto text-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?php
+                        echo '<img src="../' . $profilePicture . '" alt="Profile Picture" class="avatar-image img-fluid">';
+                        ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="dropdown-header text-center text-md font-weight-bold text-dark"><?php echo $fname . ' ' . $lname; ?></li>
+                        <li class="text-center"><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
+                        <li class="text-center"><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id ?>">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 <script>
@@ -145,12 +163,12 @@ function showFullImage(img) {
     
 <body>
             <section class="h-100 h-custom gradient-custom-2 border" style="background-image: url(../Assets/images/Background-palay.png);">
-            <div class="container py-5 h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="container py-5 h-100 ">
+                <div class="row d-flex justify-content-center align-items-center h-100 ">
                 <div class="col-12">
-                    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                    <div class="card card-registration card-registration-2 " style="border-radius: 15px;">
                     <form action="../php/updatebuyer.php" method="POST" enctype="multipart/form-data">
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 ">
                         <div class="row g-0">
                             <div class="col-lg-6" style="background: #F3EFE2;">
                             <div class="p-5">
@@ -178,25 +196,25 @@ function showFullImage(img) {
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <h5 class="mb-2 pb-1"><i class="fa-solid fa-venus-mars"></i>&nbsp;Gender:</h5>
-                                    <select name="gender" class="form-select form-select-md form-select-border">
+                                    <select name="gender" class="form-control">
                                     <option value="" disabled selected>Select Gender</option>
                                     <option value="Male" <?php if ($fetch['gender'] === 'Male') echo 'selected'; ?>>Male</option>
                                     <option value="Female" <?php if ($fetch['gender'] === 'Female') echo 'selected'; ?>>Female</option>
                                     </select>
                                 </div>
-                                <div class="mb-4 pb-2">
+                                <div class="form-group col-md-12">
                                     <div class="form-outline">
                                     <i class="fa-regular fa-address-book"></i><label class="form-label" for="contactnumber" style="font-weight: bold;">&nbsp;Contact Number</label>
                                     <input name="cnumber" type="tel" class="form-control form-control-md" value="<?php echo $fetch['contact']?>" pattern="[0-9]{10}" />
                                     </div>
                                 </div>
-                                <div class="mb-4 pb-2">
+                                <div class="form-group col-md-12">
                                     <div class="form-outline">
                                     <i class="fa-solid fa-location-dot"></i> <label class="form-label" for="address" style="font-weight: bold;">&nbsp;Address</label>
                                     <input name="address" type="text" class="form-control form-control-md" pattern="[a-zA-Z'-'\s]*" value="<?php echo $fetch['address']?>" />
                                     </div>
                                 </div>
-                                <div class="mb-4 pb-2">
+                                <div class="form-group col-md-12">
                                     <div class="form-outline">
                                     <i class="fa-regular fa-envelope"></i> <label class="form-label" for="email" style="font-weight: bold;">&nbsp;Email Address</label>
                                     <input name="email" type="email" class="form-control form-control-md" value="<?php echo $fetch['email']?>" />
@@ -211,12 +229,12 @@ function showFullImage(img) {
                                     <i class="fa-solid fa-key"></i> <label class="form-label" for="form3Example1m1" style="font-weight: bold;">&nbsp;Confirm Password</label>
                                     <input type="password" name="cpassword" class="form-control form-control-md" placeholder="Confirm your New Password" />
                                     </div>
-                                    <p class="fst-italic mb-4 pb-2">Leave the New Password Fields blank if you don't want to update it.</p>
+                                    <p class="small text-muted pb-2  ml-2">Leave the New Password Fields blank if you don't want to update it.</p>
                                 </div>
                                 </div>
                             </div>
                             </div>
-                            <div class="col-lg-6 bg-indigo text-black fw-bold">
+                            <div class="col-lg-6 text-black fw-bold batman" style="background-color: #D5D8C5;";>
                             <div class="p-5">
                                 <h3 class="fw-bold mb-2 mt-2">Proof of Details</h3>
                                 <hr class="mx-n3">
@@ -229,8 +247,11 @@ function showFullImage(img) {
                                     <div class="form-group col-lg-6 text-center mb-2 mx-auto">
                                     <img src="<?php echo '../' . $fetch['valid_id']; ?>" alt="Valid ID" id="previewImg" class="border border-gray img-thumbnail" onclick="showFullImage(this)">
                                     </div>
-                                    <input class="form-control form-control-sm" name="validid" type="file" onchange="previewFile('previewImg', this);"/>
-                                    <div class="small text-muted mt-2">Upload your Valid Identification (I.D). Max file size 30 MB</div>
+                                    <div class="custom-file">
+                                      <input class="custom-file-input" name="validid" type="file" onchange="previewFile('previewImg', this);"/>
+                                      <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                      <div class="small text-muted mt-2">Upload your Valid Identification (I.D). Max file size 30 MB</div>
+                                    </div>
                                 </div>
                                 </div>
                                 <hr class="mx-n3">
@@ -243,8 +264,11 @@ function showFullImage(img) {
                                     <div class="form-group col-lg-6 text-center mb-2 mx-auto">
                                     <img src="<?php echo '../' . $fetch['profile_picture']; ?>" alt="Profile Picture" id="previewProfile" class="border border-gray img-thumbnail" onclick="showFullImage(this)">
                                     </div>
-                                    <input name="profilePicture" class="form-control form-control-sm" name="profilePictureInput" type="file" onchange="previewFile('previewProfile', this);" />
-                                    <div class="small text-muted mt-2">Upload your Profile Picture. Max file size 30 MB</div>
+                                     <div class="custom-file">
+                                       <input name="profilePicture" class="custom-file-input" name="profilePictureInput" type="file" onchange="previewFile('previewProfile', this);" />
+                                       <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                       <div class="small text-muted mt-2">Upload your Profile Picture. Max file size 30 MB</div>
+                                      </div>
                                 </div>
                                 </div>
                                 <hr class="mx-n3">
@@ -258,11 +282,19 @@ function showFullImage(img) {
                         </div>
                         </div>
                     </div>
+
+                    
+
+                    
+
                     </form>
                 </div>
                 </div>
             </div>
+            
             </section>
+
+            
 
 	<!-- footer section end-->
 
@@ -271,10 +303,16 @@ function showFullImage(img) {
     <div class="copyright py-4 text-center text-white d-flex p-2">
       <div class="container"><small>Copyright &copy; Pale-ngkihan 2023</small></div>
   </div>
+  <!-- bs-custom-file-input -->
+<script src="../Assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <!--Animation java-->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
       AOS.init();
+
+      $(function () {
+  bsCustomFileInput.init();
+});
     </script>
         <!--Java-->
         <script src="../js/update.js"></script>

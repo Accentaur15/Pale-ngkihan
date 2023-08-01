@@ -17,8 +17,10 @@ if (mysqli_num_rows($qry) > 0) {
   if ($row) {
     $shopname = $row['shop_name'];
     $shoplogo = $row['shop_logo'];
+    $sellerid = $row['id'];
   }
 }
+include_once('../php/sellercount.php');
 
 ?>
 <!DOCTYPE html>
@@ -81,7 +83,7 @@ include('../Assets/includes/sidebar.php');
               <span class="info-box-icon bg-gradient-success elevation-1"><i class="fas fa-th-list"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Total Categories</span>
-                <span class="info-box-number text-right h4">4</span>
+                <span class="info-box-number text-right h4"><?php echo $categoryCount;?></span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -92,7 +94,7 @@ include('../Assets/includes/sidebar.php');
               <span class="info-box-icon bg-gradient elevation-1" style="background-color: #C5BA92;"><i class="fa-solid fa-boxes-stacked" style="color: #ffffff;"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Total Products</span>
-                <span class="info-box-number text-right h4">4</span>
+                <span class="info-box-number text-right h4"><?php echo $productCount?></span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -111,7 +113,7 @@ include('../Assets/includes/sidebar.php');
 
           <div class="col-12 col-lg-6 col-lg-6">
             <div class="info-box custom-info-box">
-              <span class="info-box-icon bg-gradient-info elevation-1"><i class="fas fa-comments" style="color: #ffffff;"></i></span>
+              <span class="info-box-icon bg-gradient-info elevation-1"> <i class="nav-icon fas fa-star"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Total Ratings & Reviews</span>
                 <span class="info-box-number text-right h4">4</span>

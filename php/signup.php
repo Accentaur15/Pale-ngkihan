@@ -22,7 +22,7 @@ $address = $_POST['address'];
 $email = $_POST['email'];
 $password = md5($_POST['password']);
 $cpassword = md5($_POST['cpassword']);
-$status = '0';
+$status = '1';
 $delete_flag = '0';
 $validIdFile = $_FILES['validid'];
 $profilePictureFile = $_FILES['profilePicture'];
@@ -51,7 +51,7 @@ if (!empty($fname) && !empty($mname) && !empty($lname) && !empty($gender) && !em
                                 if (mysqli_num_rows($result) > 0) {
                                     $lastUserId = mysqli_fetch_assoc($result)['unique_id'];
                                     // Extract the number increment from the last user ID
-                                    $lastIncrement = explode('-', $lastUserId)[1];
+                                    $lastIncrement = explode('-', $lastUserId)[4];
                 
                                     // Generate the new increment by incrementing the last increment value
                                     $newIncrement = $lastIncrement + 1;

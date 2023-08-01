@@ -6,6 +6,7 @@
 </div>
 <!-- ./wrapper -->
 
+
 <!-- REQUIRED SCRIPTS -->
 <!-- jQuery -->
 <script src="../Assets/plugins/jquery/jquery.min.js"></script>
@@ -20,6 +21,8 @@
 <script src="../Assets/plugins/codemirror/mode/css/css.js"></script>
 <script src="../Assets/plugins/codemirror/mode/xml/xml.js"></script>
 <script src="../Assets/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../Assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 <!-- DataTables  & Plugins -->
 <script src="../Assets/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="../Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -33,7 +36,13 @@
 <script src="../Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="../Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="../Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+
 <script>
+          $(function () {
+            bsCustomFileInput.init();
+        });
+
   $("#productlist").DataTable({
     "paging": true,
       "lengthChange": true,
@@ -43,7 +52,7 @@
       "autoWidth": false,
       "responsive": true,
   });
-
+//summernote
   $(document).ready(function() {
   $('#summernote').summernote({
     toolbar: [
@@ -58,7 +67,57 @@
   
 });
 
+//edit category
+$(document).ready(function() {
+  $('#editcategory').on('hidden.bs.modal', function () {
+    $('body').css('overflow', 'auto');
+  });
+});
+
+
+$(document).ready(function() {
+                $('.editbtn').on('click', function() {
+                    $('#editcategory').modal({
+      backdrop: false
+    });
+// Open the modal when the button is clicked
+$('#editcategory').modal('show');
+                    $tr = $(this).closest('tr');
+                    var tabdata = $tr.children("td").map(function() {
+                        return $(this).text();
+                    }).get();
+
+                    //console.log(tabdata);
+                    $('#update_id').val(tabdata[0].toString().trim());
+                    $('#cname').val(tabdata[2]);
+                    $('#description').val(tabdata[3]);
+                    var statusValue = tabdata[4].trim() === 'Active' ? '1' : '2';
+        $('#status').val(statusValue);
+
+                   
+                });
+            });
+
+
+        //summernote productedit
+        $(document).ready(function() {
+    var productDescription = $('#summernoteproductedit').data('value');
+  
+    $('#summernoteproductedit').summernote({
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['view', ['fullscreen', 'help']]
+        ],
+    });
+  
+    $('#summernoteproductedit').summernote('code', productDescription);
+});
 </script>
+
 
 
 </body>

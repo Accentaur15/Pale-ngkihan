@@ -2,6 +2,7 @@
 
 session_start();
 include_once('../php/config.php');
+include_once('../php/cart_functions.php'); 
 $unique_id = $_SESSION['unique_id'];
 
 if (empty($unique_id)) {
@@ -16,9 +17,11 @@ if (mysqli_num_rows($qry) > 0) {
     $fname = $row['first_name'];
     $lname = $row['last_name'];
     $profilePicture = $row['profile_picture'];
+    $id = $row['id'];
   }
 }
-
+$cartItemCount = getCartItemCount($conn, $id);
+include_once('../php/notifications.php'); 
 ?>
 
 <!DOCTYPE html>
@@ -44,66 +47,61 @@ if (mysqli_num_rows($qry) > 0) {
  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
  
  
+     <!--Navigation Bar-->
+     <nav class="navbar navbar-expand-md navbar-light" style="background: rgb(229, 235, 232);">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+            <img src="../Assets/logo/Artboard 1.png" class="logo">
+        </a>
 
- <!--primary navbar-->
- 
-        
- <nav class="navbar navbar-light navbar-expand-sm" style=" background: rgb(229, 235, 232);">
-            <div class="container-fluid">
-              <ul class="navbar-nav ms-auto justify-content-end">
-              <li class="nav-item dropdown">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link mx-3" aria-current="page" href="buyermain.php">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  mx-3" href="../buyer/marketplace.php">Marketplace</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active mx-3" href="buyeraboutus.php">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/myorders.php">My Orders</a>
+                </li>
+                <?php include('../Assets/includes/notification.php');?>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
+                    <?php
+                      if ($cartItemCount > 0) {
+                          echo '<span class="badge bg-success position-absolute top-0 end-0">' . $cartItemCount . '</span>';
+                      }
+                      ?>
+                </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto text-center">
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php
                         echo '<img src="../' . $profilePicture . '" alt="Profile Picture" class="avatar-image img-fluid">';
-                        echo $fname . ' ' . $lname;
                     ?>
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <li><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
-                    <li><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id?>">Log out</a></li>
+                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="dropdown-header text-center text-md font-weight-bold text-dark"><?php echo $fname . ' ' . $lname; ?></li>
+                    <li class="text-center"><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
+                    <li class="text-center"><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id ?>">Log out</a></li>
                 </ul>
             </li>
-              </ul>
-            </div>
-          </nav>
-      
-
-
-            
-
-
-    <!--end of primary navbar-->
-    <!--Navigation Bar-->
-    <nav class="navbar navbar-expand-md bg-light ">
-  <div class="container-fluid">
-  <a class="navbar-brand" href="index.html">
-                <img src="../Assets/logo/Artboard 1.png" class="logo">
-              </a>
-
-        
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#buton">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="buton">
-      <ul class="navbar-nav text-center">
-        <li class="nav-item">
-          <a class="nav-link active mx-3" aria-current="page" href="buyermain.php">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#">Marketplace</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#">My Orders</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-3" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
-        </li>
-      </ul>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
     <!--End of Navigation Bar-->

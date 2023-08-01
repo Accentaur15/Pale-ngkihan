@@ -17,7 +17,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png" />
-    <link rel="manifest" href="/Assets/logo/site.webmanifest">
     <!--Animation-->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
@@ -77,33 +76,38 @@
                                             alt="logo">
                                         <h2 class="mt-1 mb-5 pb-1" style="font-weight: bolder;">Admin Login</h2>
                                     </div>
+                                    <div class="this">
+                                        <form action="php/adminsignin.php" method="POST" >
+                                            <div class="error-text alert alert-danger text-center fs-5"
+                                                style="display:none;">Error</div>
+                                            <p class="text-center">Sign in to start your session</p>
 
-                                    <form>
-                                        <p>Sign in to start your session</p>
+                                            <div class="form-outline mb-4">
+                                            <i class="fa-sharp fa-regular fa-user" style="color: #1b2c4b;"></i>
+                                                <label
+                                                    class="form-label"  style="font-weight: bold;">Username
+                                                </label>
+                                                <input name="uname" type="text" class="form-control"
+                                                    placeholder="Enter Username" />
+                                            </div>
 
-                                        <div class="form-outline mb-4">
-                                            <i class="fa-regular fa-envelope" style="color: #1b2c4b;"></i> <label
-                                                class="form-label" for="user" style="font-weight: bold;">Email
-                                                Address</label>
-                                            <input type="email" id="user" class="form-control"
-                                                placeholder="name@example.com" />
-                                        </div>
-
-                                        <div class="form-outline mb-4">
-                                            <i class="fa-solid fa-lock"></i> <label class="form-label"
-                                                for="form2Example22" style="font-weight: bold;">Password</label>
-                                            <input type="password" id="form2Example22" class="form-control"
-                                                placeholder="Enter Password" />
-                                        </div>
-
-
-                                        <div class="text-center pt-1 mb-5 pb-1">
-                                            <button class="btn text-white  w-100 btn btn-lg" type="button"
-                                                style="background: #6BB25A;">Login</button>
-                                        </div>
+                                            <div class="form-outline mb-4">
+                                                <i class="fa-solid fa-lock"></i> <label class="form-label"
+                                                     style="font-weight: bold;">Password</label>
+                                                <input name="password" type="password" class="form-control"
+                                                    placeholder="Enter Password" />
+                                            </div>
 
 
-                                    </form>
+                                            <div class="text-center pt-1 mb-5 pb-1">
+                                                <button type="submit" name="submit"
+                                                    class="button btn text-white  w-100 btn btn-lg"
+                                                    style="background: #6BB25A;">Login</button>
+                                            </div>
+
+
+                                        </form>
+                                    </div>
 
                                 </div>
                             </div>
@@ -133,13 +137,46 @@
     <!--Animation java-->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-    AOS.init();
+        AOS.init();
+    </script>
+    <script>
+        const form = document.querySelector('.this form');
+        const submitBtn = form.querySelector('.button');
+        const errorText = form.querySelector('.error-text');
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+        }
+
+        submitBtn.onclick = () => {
+            // Start AJAX
+            let xhr = new XMLHttpRequest(); // Create XML object
+            xhr.open("POST", "../php/adminsignin.php", true);
+            xhr.onload = () => {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        let data = xhr.response.trim(); // Trim whitespace from the response
+                        let comparisonResult = data === "success";
+                        if (comparisonResult) {
+                            location.href = "../admin/adminmain.php";
+                        } else {
+                            errorText.textContent = data;
+                            errorText.style.display = "block";
+                        }
+                    }
+                }
+            }
+            // Send data through AJAX to PHP
+            let formData = new FormData(form); // Create new FormData object from the form data
+            xhr.send(formData); // Send data to PHP
+        }
+
     </script>
 
     <!--Bootstrap java-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+        </script>
 </body>
 
 </html>

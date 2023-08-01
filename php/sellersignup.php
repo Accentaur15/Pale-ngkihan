@@ -23,7 +23,7 @@ $email = $_POST['email'];
 $password = md5($_POST['password']);
 $cpassword = md5($_POST['cpassword']);
 $ispstore = isset($_POST['ispstore']) ? $_POST['ispstore'] : '';
-$status = '0';
+$status = '1';
 $delete_flag = '0';
 $businesspermit = isset($_FILES['bpermit']) ? $_FILES['bpermit'] : '';
 $dtipermit = isset($_FILES['dtipermit']) ? $_FILES['dtipermit'] : '';
@@ -55,7 +55,7 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                 if (mysqli_num_rows($result) > 0) {
                     $lastUserId = mysqli_fetch_assoc($result)['unique_id'];
                     // Extract the number increment from the last user ID
-                    $lastIncrement = explode('-', $lastUserId)[1];
+                    $lastIncrement = explode('-', $lastUserId)[4];
 
                     // Generate the new increment by incrementing the last increment value
                     $newIncrement = $lastIncrement + 1;
@@ -219,6 +219,9 @@ if (!empty($shopname) && !empty($username) && !empty($shopowner) && !empty($gend
                                                 $dtiPermitDestination = null;
                                                 $mayorsPermitDestination = null;
                                             }
+
+
+
 
                 // Insert data into the table
                 $insertQuery = "INSERT INTO seller_accounts (unique_id, username, shop_name, shop_owner, gender, contact, address, email, password, has_pstore, business_permit, dti_permit, mayors_permit, valid_id, shop_logo, status, delete_flag, date_updated) VALUES ('{$random_id}','{$username}', '{$shopname}', '{$shopowner}', '{$gender}', '{$cnumber}', '{$address}', '{$email}', '{$password}', '{$ispstore}', '{$businessPermitDestination}', '{$dtiPermitDestination}', '{$mayorsPermitDestination}', '{$validIdDestination}', '{$shoplogoDestination}', '{$status}', '{$delete_flag}', NULL)";

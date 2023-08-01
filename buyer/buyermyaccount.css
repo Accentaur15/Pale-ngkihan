@@ -18,7 +18,8 @@ img.logo{
 }
 
 .dropdown-menu.show {
-    background-color:#9EB3A4;
+    background:rgb(220, 233, 226); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add the box shadow */
    
 }
 
@@ -33,11 +34,7 @@ img.logo{
   }
 
 
-  @media (min-width: 1025px) {
-    .h-custom {
-    height: 100vh !important;
-    }
-    }
+  
     .card-registration .select-input.form-control[readonly]:not([disabled]) {
     font-size: 1rem;
     line-height: 2.15;
@@ -59,17 +56,15 @@ img.logo{
     background-image: url(../Assets/images/Background-palay.png);
     }
     
-    .bg-indigo {
-    background-color: #D5D8C5;
-    }
+   
     @media (min-width: 992px) {
-    .card-registration-2 .bg-indigo {
+    .card-registration-2 .batman {
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     }
     }
     @media (max-width: 991px) {
-    .card-registration-2 .bg-indigo {
+    .card-registration-2 .batman {
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
     }
@@ -104,4 +99,5 @@ img.logo{
         max-height: 90%;
         object-fit: contain;
       }
+      
       

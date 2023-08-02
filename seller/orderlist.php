@@ -260,6 +260,8 @@ include('../Assets/includes/sidebar.php');
     // Remove the modal backdrop when the modal is closed
     $('.modal-backdrop').remove();
 });
+
+
     </script>
 
 

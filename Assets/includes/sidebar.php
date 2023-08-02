@@ -31,13 +31,28 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fa-solid fa-calendar-days"></i>
-              <p>
-                Harvest Schedule
-              </p>
-            </a>
-          </li>
+<a href="#" class="nav-link keychainify-checked">
+<i class="nav-icon fa-solid fa-calendar-days"></i>
+<p>
+Harvest Schedule
+<i class="right fas fa-angle-left"></i>
+</p>
+</a>
+<ul class="nav nav-treeview" style="display: block;">
+<li class="nav-item">
+<a href="../seller/harvest_schedule_listing.php" class="nav-link keychainify-checked">
+<i class="nav-icon fa-brands fa-readme"></i>
+<p>Listings</p>
+</a>
+</li>
+<li class="nav-item">
+<a href="#" class="nav-link keychainify-checked">
+<i class="nav-icon fa-solid fa-money-bill"></i>
+<p>Bid Offers</p>
+</a>
+</li>
+</ul>
+</li>
           <li class="nav-item">
             <a href="../seller/orderlist.php" class="nav-link">
               <i class="nav-icon fas fa-clipboard-list"></i>

@@ -1,26 +1,31 @@
 <?php
 // update_order_status.php
 
-
-ini_set('display_errors', 1);
 include_once('../php/config.php');
+ini_set('log_errors', 1);
+ini_set('error_log', '../errorlog.txt');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve the form data
     $orderCode = $_POST['order_code'];
     $status = $_POST['status'];
 
-    // Sanitize and validate the data (you should add appropriate sanitization and validation here)
-
     // Perform the database update
     // Assuming you have a table named "order_list" with columns "id" and "order_status"
-    $updateQuery = "UPDATE `order_list` SET `order_status` = '{$status}' WHERE `order_code` = '{$orderCode}'";
-    $result = $conn->query($updateQuery);
+    $updateQuery = "UPDATE `order_list` SET `order_status` = ? WHERE `order_code` = ?";
+    $updateStatement = $conn->prepare($updateQuery);
+    $updateStatement->bind_param('is', $status, $orderCode);
 
-    if ($result) {
+    if ($updateStatement->execute()) {
+        $updateStatement->close();
+
         // If the database update is successful, retrieve additional information from the "notifications" table
-        $selectQuery = "SELECT order_list_id, buyer_id FROM `notifications` WHERE `order_code` = '{$orderCode}'";
-        $notificationResult = $conn->query($selectQuery);
+        $selectQuery = "SELECT order_list_id, buyer_id FROM `notifications` WHERE `order_code` = ?";
+        $selectStatement = $conn->prepare($selectQuery);
+        $selectStatement->bind_param('s', $orderCode);
+        $selectStatement->execute();
+        $notificationResult = $selectStatement->get_result();
+        $selectStatement->close();
 
         if ($notificationResult && $notificationResult->num_rows > 0) {
             $notificationData = $notificationResult->fetch_assoc();
@@ -28,12 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Additional information retrieved from the "notifications" table
             $orderListId = $notificationData['order_list_id'];
             $buyerId = $notificationData['buyer_id'];
-        } else {
-            // If there is no corresponding notification data, you can set default values or provide an appropriate message.
-            // In this example, we assume default values.
-            $orderListId = '';
-            $buyerId = '';
-        }
+        } 
 
         // Set the notification title based on the selected order status
         switch ($status) {
@@ -63,25 +63,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Assuming you have a table named "notifications" to store notifications
         $notificationMessage = "The order with code '{$orderCode}' has been updated to status '{$status}'.";
 
-        // Perform the database insert to create the notification
-        $insertQuery = "INSERT INTO `notifications` (order_list_id, buyer_id, notification_title, message, order_code) VALUES ('$orderListId', '$buyerId', '$notificationTitle', '$notificationMessage', '$orderCode')";
-        $insertResult = $conn->query($insertQuery);
+        // Perform the database insert to create the notification using prepared statements
+        $insertQuery = "INSERT INTO `notifications` (order_list_id, buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?, ?)";
+        $insertStatement = $conn->prepare($insertQuery);
+        $insertStatement->bind_param('iisss', $orderListId, $buyerId, $notificationTitle, $notificationMessage, $orderCode);
 
-        if (!$insertResult) {
-            echo "<script>console.error('Error inserting notification for order code \'{$orderCode}\'.');</script>";
+        if (!$insertStatement->execute()) {
+            // If the database insert fails, return an error response
+            $response = array(
+                'success' => false,
+                'message' => 'Failed to update order status. Please try again later.',
+            );
+
+            // Log the error
+            $error_message = "Error inserting notification for order code '{$orderCode}'.";
+            error_log($error_message);
+        } else {
+            // Prepare the response
+            $response = array(
+                'success' => true,
+                'message' => 'Order status updated successfully!',
+            );
         }
 
-        // Prepare the response
-        $response = array(
-            'success' => true,
-            'message' => 'Order status updated successfully!',
-        );
+        $insertStatement->close();
     } else {
         // If the database update fails, return an error response
         $response = array(
             'success' => false,
             'message' => 'Failed to update order status. Please try again later.',
         );
+
+        // Log the error
+        $error_message = "Error updating order status for code '{$orderCode}'.";
+        error_log($error_message);
     }
 
     // Send the JSON response

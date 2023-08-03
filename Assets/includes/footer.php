@@ -41,6 +41,112 @@
 
 
 <script>
+// Function to generate star rating HTML based on the rating value
+function generateStarRating(rating) {
+  const fullStar = '<i class="fas fa-star"></i>';
+  const halfStar = '<i class="fas fa-star-half-alt"></i>';
+  const emptyStar = '<i class="far fa-star"></i>';
+
+  const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
+
+  const fullStarsCount = Math.floor(roundedRating);
+  const halfStarPresent = roundedRating % 1 !== 0;
+  const emptyStarsCount = 5 - Math.ceil(roundedRating);
+
+  let starRatingHTML = '';
+
+  for (let i = 0; i < fullStarsCount; i++) {
+    starRatingHTML += fullStar;
+  }
+
+  if (halfStarPresent) {
+    starRatingHTML += halfStar;
+  }
+
+  for (let i = 0; i < emptyStarsCount; i++) {
+    starRatingHTML += emptyStar;
+  }
+
+  return `<span class="star-rating">${starRatingHTML}</span>`;
+}
+
+// Function to fetch and display reviews for a product
+function displayProductReviews(productId, page = 1, reviewsPerPage = 5) {
+  // Make an Ajax request to fetch reviews for the given product
+  $.ajax({
+    url: '../php/get_product_reviews.php',
+    method: 'POST',
+    data: { product_id: productId, page: page, reviews_per_page: reviewsPerPage },
+    dataType: 'json',
+    success: function(response) {
+      // Display the reviews in the modal
+      var reviewsHTML = '';
+
+      if (response.reviews.length > 0) {
+        response.reviews.forEach(review => {
+          // Generate star rating HTML based on the rating value
+          const starRating = generateStarRating(review.rating);
+
+          reviewsHTML += `
+            <div class="card mb-2">
+              <div class="card-header">
+                <h5 class="card-title">Reviewer Name: ${review.reviewer_name}</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">Rating: ${starRating}</p>
+                <p class="card-text">Review Text: ${review.review_text}</p>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        reviewsHTML = '<p>No reviews for this product yet.</p>';
+      }
+
+      // Show the reviews in the modal's body
+      $('#reviewsContainer').html(reviewsHTML);
+
+      // Update pagination controls
+      updatePaginationControls(response.total_reviews, page, reviewsPerPage);
+    },
+    error: function(xhr, status, error) {
+      // Handle any errors if needed
+      console.error(xhr.responseText);
+    }
+  });
+}
+
+// Function to update pagination controls
+function updatePaginationControls(totalReviews, currentPage, reviewsPerPage) {
+  const totalPages = Math.ceil(totalReviews / reviewsPerPage);
+  let paginationHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === currentPage) {
+      paginationHTML += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+    } else {
+      paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+    }
+  }
+
+  // Show pagination controls
+  $('#paginationContainer').html(paginationHTML);
+
+  // Attach click event handler to pagination links
+  $('#paginationContainer .page-link').on('click', function(e) {
+    e.preventDefault();
+    const page = $(this).data('page');
+    displayProductReviews(currentProductId, page, reviewsPerPage);
+  });
+}
+
+// Attach click event handler to each "View Reviews" button
+$('.view-reviews-btn').on('click', function() {
+  const productId = $(this).data('product-id');
+  currentProductId = productId; // Store the current product ID for pagination
+  displayProductReviews(productId);
+});
+
           $(function () {
             bsCustomFileInput.init();
         });
@@ -53,6 +159,15 @@
         "autoWidth": false,
         "responsive": true,
       });
+      $("#productListTable").DataTable({
+    "paging": true,
+    "lengthChange": true,
+    "searching": true,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+  });
   $("#productlist").DataTable({
     "paging": true,
       "lengthChange": true,

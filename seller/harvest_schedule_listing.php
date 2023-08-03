@@ -269,7 +269,7 @@ include('../Assets/includes/sidebar.php');
   }
   ?></td>
                         <td><?= $quantity; ?> Sacks</td>
-                        <td><?= $status == 'upcoming' ? 'Active' : 'Inactive'; ?></td>
+                        <td><?= $status?></td>
                         <td><?= $biddingStatus; ?></td>
                         <td><?= $startingbid; ?></td>
                         <td class="text-center">
@@ -407,46 +407,79 @@ function showerror(title, text, icon) {
     });
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const editButtons = document.querySelectorAll(".edit_button");
-    const editScheduleIdInput = document.getElementById("edit_schedule_id");
-    const editDateInput = document.getElementById("edit_schedule_date");
-    const editLocationInput = document.getElementById("edit_location");
-    const editQuantityInput = document.getElementById("edit_quantity_available");
-    const editStatusInput = document.getElementById("edit_status");
-    const editBiddingStatusInput = document.getElementById("edit_bidding_status");
-    const editStartingBidInput = document.getElementById("edit_starting_bid");
+  function handleEditButtonClick(scheduleId) {
+  fetch(`../php/get_harvest_schedule.php?schedule_id=${scheduleId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        const schedule = data.schedule;
+        const editScheduleIdInput = document.getElementById("edit_schedule_id");
+        const editDateInput = document.getElementById("edit_schedule_date");
+        const editLocationInput = document.getElementById("edit_location");
+        const editQuantityInput = document.getElementById("edit_quantity_available");
+        const editStatusInput = document.getElementById("edit_status");
+        const editBiddingStatusInput = document.getElementById("edit_bidding_status");
+        const editStartingBidInput = document.getElementById("edit_starting_bid");
 
-    editButtons.forEach(function (button) {
-      button.addEventListener("click", function () {
-        const scheduleId = this.dataset.scheduleId;
+        // Populate the input fields with schedule details
+        const rawDate = schedule.date_scheduled;
+const formattedDate = rawDate.split(' ')[0];
+        editDateInput.value = formattedDate;
+        console.log(formattedDate); 
+        console.log(schedule.date_scheduled);
+        editLocationInput.value = schedule.location;
+        editQuantityInput.value = schedule.quantity_available;
+        editStatusInput.value = schedule.status;
+        editBiddingStatusInput.value = schedule.bidding_status;
+        editStartingBidInput.value = schedule.starting_bid;
+        
+        // Set the schedule ID for the form submission
+        editScheduleIdInput.value = schedule.id;
+      } else {
+        console.error(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("An error occurred while fetching data:", error);
+    });
+}
 
-        // Fetch the data for the corresponding schedule using AJAX
-        fetch(`../php/get_harvest_schedule.php?schedule_id=${scheduleId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              const schedule = data.schedule;
-              editScheduleIdInput.value = schedule.id;
-              editDateInput.value = schedule.date_scheduled;
-              editLocationInput.value = schedule.location;
-              editQuantityInput.value = schedule.quantity_available;
-              editStatusInput.value = schedule.status;
-              editBiddingStatusInput.value = schedule.bidding_status;
-              editStartingBidInput.value = schedule.starting_bid;
-            } else {
-              // Show an error message if data retrieval fails
-              console.error(data.message);
-            }
-          })
-          .catch((error) => {
-            console.error("An error occurred while fetching data:", error);
-          });
-      });
+document.addEventListener("DOMContentLoaded", function() {
+  const editButtons = document.querySelectorAll(".dropdown-item[data-target='#editHarvestSchedule']");
+  editButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+      const scheduleId = this.dataset.scheduleId;
+      handleEditButtonClick(scheduleId);
     });
   });
+});
 
-  
+// JavaScript to handle the "Save Changes" button click event in the "Edit Harvest Schedule" modal
+document.getElementById("editHarvestScheduleForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  fetch(event.target.action, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // If the update is successful, show a success message
+      showAlert('Success!', 'Harvest schedule has been updated successfully.', 'success');
+      // Optionally, you can refresh the page or update the table with the new data
+      // window.location.reload();
+    } else {
+      // If there's an error, show an error message
+      showerror('Error!', data.message, 'error');
+    }
+  })
+  .catch(error => {
+    // If there's an error with the fetch request, show an error message
+    showerror('Error!', 'An error occurred while processing the request.', 'error');
+  });
+});
+
     </script>
 
 

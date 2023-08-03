@@ -79,7 +79,7 @@ Harvest Schedule
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="../seller/product_reviews.php" class="nav-link">
               <i class="nav-icon fas fa-star"></i>
               <p>
                 Ratings & Reviews

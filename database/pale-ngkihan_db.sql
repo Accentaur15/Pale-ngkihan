@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 01, 2023 at 02:35 PM
+-- Generation Time: Aug 08, 2023 at 11:26 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -84,6 +84,20 @@ INSERT INTO `buyer_accounts` (`id`, `unique_id`, `first_name`, `middle_name`, `l
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `buyer_bids`
+--
+
+CREATE TABLE `buyer_bids` (
+  `id` int(30) NOT NULL,
+  `harvest_schedule_id` int(30) DEFAULT NULL,
+  `buyer_id` int(30) DEFAULT NULL,
+  `bid_amount` double DEFAULT NULL,
+  `bid_status` enum('pending','accepted','rejected') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `cart_list`
 --
 
@@ -123,6 +137,33 @@ INSERT INTO `category_list` (`id`, `name`, `description`, `status`, `date_create
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `harvest_schedule`
+--
+
+CREATE TABLE `harvest_schedule` (
+  `id` int(30) NOT NULL,
+  `seller_id` int(30) NOT NULL,
+  `date_scheduled` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `rice_type` text NOT NULL,
+  `harvest_image` text NOT NULL,
+  `quantity_available` int(11) DEFAULT NULL,
+  `location` text DEFAULT NULL,
+  `status` enum('upcoming','ongoing','completed') DEFAULT NULL,
+  `bidding_status` tinyint(4) NOT NULL,
+  `starting_bid` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `harvest_schedule`
+--
+
+INSERT INTO `harvest_schedule` (`id`, `seller_id`, `date_scheduled`, `rice_type`, `harvest_image`, `quantity_available`, `location`, `status`, `bidding_status`, `starting_bid`) VALUES
+(21, 10, '2023-08-08 16:00:00', 'Dinoradoto', '../seller_profiles/S-2023-07-06-1/-64d0a6114f698.png', 200, 'Latitude: 15.1521, Longitude: 120.5863', 'upcoming', 1, 0),
+(22, 10, '2023-08-18 16:00:00', 'Jasmine Rice', '../seller_profiles/S-2023-07-06-1/-64d0fdeae3bb0.png', 400, 'dito lang sa gilid', 'upcoming', 0, 23);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -142,8 +183,13 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `order_list_id`, `order_code`, `buyer_id`, `notification_title`, `message`, `timestamp`, `is_seen`) VALUES
-(6, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Placed', 'Your order with Order Number ORD-1690810528-7780DBGN has been successfully placed.\n', '2023-07-31 13:35:28', 0),
-(7, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Placed', 'Your order with Order Number ORD-1690812777-KLY4U5ZK has been successfully placed.\n', '2023-07-31 14:12:57', 0);
+(6, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Placed', 'Your order with Order Number ORD-1690810528-7780DBGN has been successfully placed.\n', '2023-07-31 13:35:28', 1),
+(7, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Placed', 'Your order with Order Number ORD-1690812777-KLY4U5ZK has been successfully placed.\n', '2023-07-31 14:12:57', 1),
+(8, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Confirmed', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'1\'.', '2023-08-02 06:46:03', 1),
+(9, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Packed', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'2\'.', '2023-08-02 06:46:30', 1),
+(10, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Cancelled', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'5\'.', '2023-08-07 06:27:50', 1),
+(11, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Status: Cancelled', 'The order with code \'ORD-1690812777-KLY4U5ZK\' has been updated to status \'5\'.', '2023-08-07 06:28:09', 1),
+(12, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Status: Delivered', 'The order with code \'ORD-1690812777-KLY4U5ZK\' has been updated to status \'Order Status: Delivered\'.', '2023-08-07 06:34:59', 1);
 
 -- --------------------------------------------------------
 
@@ -159,14 +205,6 @@ CREATE TABLE `order_items` (
   `review_status` tinyint(1) NOT NULL DEFAULT 0,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `order_items`
---
-
-INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`, `price`, `review_status`, `date_created`) VALUES
-(34, 20, 1, 150, 0, '2023-07-31 13:35:28'),
-(35, 20, 5, 150, 0, '2023-07-31 14:12:57');
 
 -- --------------------------------------------------------
 
@@ -194,8 +232,8 @@ CREATE TABLE `order_list` (
 --
 
 INSERT INTO `order_list` (`id`, `order_code`, `buyer_id`, `seller_id`, `total_amount`, `delivery_address`, `order_status`, `date_created`, `date_updated`, `payment_method`, `online_payment_receipt`, `delivery_method`) VALUES
-(34, 'ORD-1690810528-7780DBGN', 41, 10, 150, 'Pampanga', 0, '2023-07-31 13:35:28', '2023-08-01 03:11:40', 'Online Payment', NULL, 'Delivery'),
-(35, 'ORD-1690812777-KLY4U5ZK', 41, 10, 750, 'Pampanga', 4, '2023-07-31 14:12:57', '2023-08-01 03:11:20', 'Online Payment', NULL, 'Delivery');
+(34, 'ORD-1690810528-7780DBGN', 41, 10, 150, 'Pampanga', 5, '2023-07-31 13:35:28', '2023-08-07 06:27:50', 'Online Payment', NULL, 'Delivery'),
+(35, 'ORD-1690812777-KLY4U5ZK', 41, 10, 750, 'Pampanga', 4, '2023-07-31 14:12:57', '2023-08-07 06:34:59', 'Online Payment', NULL, 'Delivery');
 
 -- --------------------------------------------------------
 
@@ -223,8 +261,6 @@ CREATE TABLE `product_list` (
 --
 
 INSERT INTO `product_list` (`id`, `seller_id`, `category_id`, `product_name`, `product_description`, `price`, `unit`, `quantity`, `product_image`, `status`, `date_created`, `date_updated`) VALUES
-(20, 10, 1, 'Dinorados', '<p>bili na kayo</p>', 150, 'kg', 192, 'seller_profiles/S-2023-07-06-1/Dinorado.png', 1, '2023-07-11 02:14:48', '2023-07-25 10:45:47'),
-(21, 10, 3, 'Malagkit Rice', '<p>malagkit rice for sale</p>', 65, 'kg', 198, 'seller_profiles/S-2023-07-06-1/Malagkit Rice.png', 1, '2023-07-11 02:56:35', '2023-07-15 14:31:47'),
 (22, 11, 6, 'Jasponica Rice', '<p>Jasponica Rice is the best so buy now</p>', 67, 'kg', 200, 'seller_profiles/S-2023-07-25-2024/Japonica Rice.jpg', 1, '2023-07-25 10:36:44', '2023-07-31 11:04:18');
 
 -- --------------------------------------------------------
@@ -296,6 +332,14 @@ ALTER TABLE `buyer_accounts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `buyer_bids`
+--
+ALTER TABLE `buyer_bids`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `harvest_schedulefk` (`harvest_schedule_id`),
+  ADD KEY `buyer_idfk` (`buyer_id`);
+
+--
 -- Indexes for table `cart_list`
 --
 ALTER TABLE `cart_list`
@@ -308,6 +352,13 @@ ALTER TABLE `cart_list`
 --
 ALTER TABLE `category_list`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `harvest_schedule`
+--
+ALTER TABLE `harvest_schedule`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `seller_idfk` (`seller_id`);
 
 --
 -- Indexes for table `notifications`
@@ -372,6 +423,12 @@ ALTER TABLE `buyer_accounts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
+-- AUTO_INCREMENT for table `buyer_bids`
+--
+ALTER TABLE `buyer_bids`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
@@ -384,10 +441,16 @@ ALTER TABLE `category_list`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `harvest_schedule`
+--
+ALTER TABLE `harvest_schedule`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `order_list`
@@ -405,7 +468,7 @@ ALTER TABLE `product_list`
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `seller_accounts`
@@ -418,11 +481,24 @@ ALTER TABLE `seller_accounts`
 --
 
 --
+-- Constraints for table `buyer_bids`
+--
+ALTER TABLE `buyer_bids`
+  ADD CONSTRAINT `buyer_idfk` FOREIGN KEY (`buyer_id`) REFERENCES `buyer_accounts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `harvest_schedulefk` FOREIGN KEY (`harvest_schedule_id`) REFERENCES `harvest_schedule` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `cart_list`
 --
 ALTER TABLE `cart_list`
   ADD CONSTRAINT `buyer_id` FOREIGN KEY (`buyer_id`) REFERENCES `buyer_accounts` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_product_id` FOREIGN KEY (`product_id`) REFERENCES `product_list` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `harvest_schedule`
+--
+ALTER TABLE `harvest_schedule`
+  ADD CONSTRAINT `seller_idfk` FOREIGN KEY (`seller_id`) REFERENCES `seller_accounts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`

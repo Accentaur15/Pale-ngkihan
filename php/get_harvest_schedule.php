@@ -1,5 +1,8 @@
 <?php
 include_once('../php/config.php');
+//error_log("Received Schedule ID: " . $_GET['schedule_id']);
+//ini_set('log_errors', 1);
+//ini_set('error_log', '../error_log_file.log'); // Replace with the desired file path and name
 if (isset($_GET['schedule_id'])) {
     $scheduleId = $_GET['schedule_id'];
     $qry = mysqli_query($conn, "SELECT * FROM harvest_schedule WHERE id = '{$scheduleId}'");

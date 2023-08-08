@@ -150,15 +150,21 @@ $('.view-reviews-btn').on('click', function() {
           $(function () {
             bsCustomFileInput.init();
         });
-        $("#harvestSchedulesTable").DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
+
+        $(document).ready(function() {
+
+});
+$("#harvestScheduleTable").DataTable({
+          "paging": true,
+    "lengthChange": true,
+    "searching": true,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
       });
+
+      
       $("#productListTable").DataTable({
     "paging": true,
     "lengthChange": true,

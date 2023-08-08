@@ -94,9 +94,26 @@ include('../Assets/includes/sidebar.php');
         <form id="addHarvestScheduleForm" action="../php/add_harvest_schedule.php" method="POST">
           <input type="hidden" name="sellerid" value="<?= $sellerid; ?>">
           <div class="form-group">
+            <label for="type_rice">Type of Rice</label>
+            <input type="text" class="form-control" id="type_rice" name="type_rice" required>
+          </div>
+          <div class="form-group">
             <label for="schedule_date">Date</label>
             <input type="date" class="form-control" id="schedule_date" name="schedule_date" required>
           </div>
+         
+          <div class="form-group">
+                                            <label class="form-label" for="">Field Image</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input name="field_image" class="custom-file-input" type="file" onchange="previewFile('previewfieldimage', this);" required/>
+                                                    <label class="custom-file-label" for="exampleInputFile"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <img src="../seller_profiles/no-image-available.png" alt="fieldimage" id="previewfieldimage" class="border border-gray img-thumbnail mb-2" onclick="showFullImage(this)">
+         
           <div class="form-group">
             <label for="location">Location</label>
             <div class="input-group">
@@ -117,8 +134,9 @@ include('../Assets/includes/sidebar.php');
   </div>
 </div>
           <div class="form-group">
-            <label for="status">Status</label>
+            <label for="status">Harvest Schedule Status</label>
             <select class="form-control" id="status" name="status" required>
+            <option value="" selected disabled>Select Status</option>
               <option value="upcoming">Upcoming</option>
               <option value="ongoing">Ongoing</option>
             </select>
@@ -126,14 +144,20 @@ include('../Assets/includes/sidebar.php');
           <div class="form-group">
             <label for="bidding_status">Bidding Status</label>
             <select class="form-control" id="bidding_status" name="bidding_status" required>
+            <option value="" selected disabled>Select Bidding Status</option>
               <option value="1">Open for Bidding</option>
               <option value="0">Closed for Bidding</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="starting_bid">Starting Bid Price (Optional)</label>
-            <input type="number" class="form-control" id="starting_bid" name="starting_bid" min="0" step="0.01">
-          </div>
+    <label for="edit_starting_bid">Starting Bid Price <span class="info-icon" data-toggle="tooltip" data-placement="top" title="Optional if Bidding Status is Open, Required if Bidding Status is Closed"><i class="fas fa-info-circle"></i></span></label>
+    <div class="input-group">
+        <input type="number" class="form-control" id="edit_starting_bid" name="starting_bid" min="0" step="0.01">
+        <div class="input-group-append">
+            <span class="input-group-text">per kg</span>
+        </div>
+    </div>
+</div>
         </form>
       </div>
       <div class="modal-footer">
@@ -162,9 +186,25 @@ include('../Assets/includes/sidebar.php');
           <!-- Add necessary input fields for updating the schedule details -->
           <input type="hidden" name="schedule_id" id="edit_schedule_id">
           <div class="form-group">
+            <label for="edit_type_rice">Type of Rice</label>
+            <input type="text" class="form-control" id="edit_type_rice" name="type_rice" required>
+          </div>
+          <div class="form-group">
             <label for="edit_schedule_date">Date</label>
             <input type="date" class="form-control" id="edit_schedule_date" name="schedule_date" required>
           </div>
+          <div class="form-group">
+                                            <label class="form-label" for="">Field Image</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input name="field_image" class="custom-file-input" type="file" onchange="previewFile('previewfieldimage2', this);"/>
+                                                    <label class="custom-file-label" for="exampleInputFile"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <img src="../seller_profiles/no-image-available.png" alt="fieldimage" id="previewfieldimage2" class="border border-gray img-thumbnail mb-2" onclick="showFullImage(this)">
+         
           <div class="form-group">
             <label for="edit_location">Location</label>
             <div class="input-group">
@@ -185,8 +225,9 @@ include('../Assets/includes/sidebar.php');
             </div>
           </div>
           <div class="form-group">
-            <label for="edit_status">Status</label>
+            <label for="edit_status">Harvest Schedule Status</label>
             <select class="form-control" id="edit_status" name="status" required>
+            <option value="" selected disabled>Select Status</option>
               <option value="upcoming">Upcoming</option>
               <option value="ongoing">Ongoing</option>
               <option value="completed">Completed</option>
@@ -195,13 +236,20 @@ include('../Assets/includes/sidebar.php');
           <div class="form-group">
             <label for="edit_bidding_status">Bidding Status</label>
             <select class="form-control" id="edit_bidding_status" name="bidding_status" required>
+            <option value="" selected disabled>Select Bidding Status</option>
               <option value="1">Open for Bidding</option>
               <option value="0">Closed for Bidding</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="edit_starting_bid">Starting Bid Price (Optional)</label>
+          <label for="edit_starting_bid">Starting Bid Price <span class="info-icon" data-toggle="tooltip" data-placement="top" title="Optional if Bidding Status is Open, Required if Bidding Status is Closed"><i class="fas fa-info-circle"></i></span></label>
+            <div class="input-group">
+           
             <input type="number" class="form-control" id="edit_starting_bid" name="starting_bid" min="0" step="0.01">
+            <div class="input-group-append">
+            <span class="input-group-text">per kg</span>
+        </div>
+          </div>
           </div>
         </form>
       </div>
@@ -224,12 +272,14 @@ include('../Assets/includes/sidebar.php');
               <a href="#" data-toggle="modal" data-target="#addHarvestSchedule" class="btn btn-success btn-sm float-right"><i class="fas fa-plus"></i>&nbsp;Add Harvest Schedule</a>
             </div>
             <div class="card-body">
-              <table id="harvestSchedulesTable" class="table table-bordered">
+              <table id="harvestScheduleTable" class="table table-bordered">
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Type of Rice</th>
                     <th>Date</th>
                     <th>Location</th>
+                    <th>Image</th>
                     <th>Quantity Available</th>
                     <th>Status</th>
                     <th>Bidding Status</th>
@@ -244,7 +294,9 @@ include('../Assets/includes/sidebar.php');
                     $count = 1;
                     while ($scheduleRow = mysqli_fetch_assoc($harvestQuery)) {
                       $scheduleId = $scheduleRow['id'];
+                      $typeofrice = $scheduleRow['rice_type'];
                       $date = $scheduleRow['date_scheduled'];
+                      $image = $scheduleRow['harvest_image'];
                       $location = $scheduleRow['location'];
                       $quantity = $scheduleRow['quantity_available'];
                       $status = $scheduleRow['status'];
@@ -253,7 +305,9 @@ include('../Assets/includes/sidebar.php');
                       ?>
                       <tr>
                         <td><?= $count++; ?></td>
+                        <td><?=$typeofrice ?></td>
                         <td><?= $date; ?></td>
+                        <td class="text-center align-middle"><img class="product-image border border-gray img-thumbnail product-img" src="<?=$image; ?>"  alt="fieldimage"  onclick="showFullImage(this)"></td>
                         <td class="text-center" >  <?php
   // Check if the location contains GPS coordinates
   if (preg_match('/Latitude: ([+-]?\d+\.\d+), Longitude: ([+-]?\d+\.\d+)/', $location, $matches)) {
@@ -269,9 +323,38 @@ include('../Assets/includes/sidebar.php');
   }
   ?></td>
                         <td><?= $quantity; ?> Sacks</td>
-                        <td><?= $status?></td>
-                        <td><?= $biddingStatus; ?></td>
-                        <td><?= $startingbid; ?></td>
+                        <td>
+  <?php
+  // Check the status value and set the appropriate badge class
+  $status = strtolower($status);
+  switch ($status) {
+    case 'upcoming':
+      echo '<span class="badge badge-primary px-3 rounded-pill">Upcoming</span>';
+      break;
+    case 'ongoing':
+      echo '<span class="badge badge-success px-3 rounded-pill">Ongoing</span>';
+      break;
+    case 'completed':
+      echo '<span class="badge badge-info px-3 rounded-pill">Completed</span>';
+      break;
+    default:
+      echo '<span class="badge badge-secondary px-3 rounded-pill">Unknown</span>';
+      break;
+  }
+  ?>
+</td>
+<td>
+  <?php
+  $biddingStatus = $scheduleRow['bidding_status'];
+  if ($biddingStatus == 1) {
+    echo '<span class="badge badge-success px-3 rounded-pill">Open for Bidding</span>';
+  } else {
+    echo '<span class="badge badge-danger px-3 rounded-pill">Closed for Bidding</span>';
+  }
+  ?>
+</td>
+<td><?= ( $startingbid!== null) ?  $startingbid: 'None'; ?></td>
+
                         <td class="text-center">
   <div class="btn-group">
     <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
@@ -279,13 +362,13 @@ include('../Assets/includes/sidebar.php');
       <span class="sr-only">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right" role="menu">
-    <a href="#" class="dropdown-item" data-toggle="modal" data-target="#editHarvestSchedule" data-schedule-id="<?= $scheduleId; ?>">
-      <i class="fas fa-edit text-primary"></i> Edit
-    </a>
+    <a href="#" class="dropdown-item edit-schedule-btn" data-schedule-id="<?= $scheduleId; ?>">
+  <i class="fas fa-edit text-primary"></i> Edit
+</a>
       <div class="dropdown-divider"></div>
       <form action="../php/delete_harvest_schedule.php" method="POST">
         <input type="hidden" name="schedule_id" value="<?= $scheduleId; ?>">
-        <button type="submit" class="dropdown-item delete_data" onclick="return confirm('Are you sure you want to delete this schedule?');">
+        <button class="dropdown-item delete-data-btn" data-schedule-id="<?= $scheduleId; ?>">
           <i class="fas fa-trash text-danger"></i> Delete
         </button>
       </form>
@@ -313,6 +396,83 @@ include('../Assets/includes/sidebar.php');
 
     <!-- REQUIRED SCRIPTS -->
     <script>
+  // Function to delete a harvest schedule
+  function deleteHarvestSchedule(scheduleId) {
+    // Show the confirmation dialog
+    Swal.fire({
+      title: 'Confirm Deletion',
+      text: 'Are you sure you want to delete this harvest schedule?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        popup: 'swal2-small', // Add custom class for small size
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If the user confirms the deletion, proceed with the deletion process
+        const formData = new FormData();
+        formData.append('schedule_id', scheduleId);
+
+        fetch('../php/delete_harvest_schedule.php', {
+          method: 'POST',
+          body: formData,
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            // If the deletion is successful, show a success message
+            showAlert('Success!', 'Harvest schedule has been deleted successfully.', 'success');
+            // Optionally, you can refresh the page or update the table with the new data
+            // window.location.reload();
+          } else {
+            // If there's an error, show an error message
+            showerror('Error!', data.message, 'error');
+          }
+        })
+        .catch((error) => {
+          // If there's an error with the fetch request, show an error message
+          showerror('Error!', 'An error occurred while processing the request.', 'error');
+        });
+      }
+    });
+  }
+
+  // Add event listener to the delete button
+  document.addEventListener('click', function (event) {
+    // Check if the clicked element has the class "delete-data-btn"
+    if (event.target.classList.contains('delete-data-btn')) {
+      // Prevent the default link behavior
+      event.preventDefault();
+
+      // Get the schedule ID from the data attribute
+      const scheduleId = event.target.dataset.scheduleId;
+
+      // Call the deleteHarvestSchedule function with the schedule ID
+      deleteHarvestSchedule(scheduleId);
+    }
+  });
+
+
+
+  // Get the elements
+  const biddingStatusInput = document.getElementById("bidding_status");
+  const startingBidInput = document.getElementById("starting_bid");
+  const addHarvestScheduleForm = document.getElementById("addHarvestScheduleForm");
+
+  // Function to validate the form before submission
+  function validateForm(event) {
+    const isBiddingClosed = biddingStatusInput.value === "0";
+    if (isBiddingClosed && !startingBidInput.value) {
+      event.preventDefault(); // Prevent form submission if starting bid is not filled
+      showerror('Error!', 'Starting Bid Price is required when Bidding Status is set to "Closed for Bidding".', 'error');
+    }
+  }
+
+  // Add event listener to the form submit event
+  addHarvestScheduleForm.addEventListener("submit", validateForm);
         // Define the showAlert function
 function showAlert(title, text, icon) {
   Swal.fire({
@@ -385,74 +545,82 @@ function showerror(title, text, icon) {
         // window.location.reload();
       } else {
         // If there's an error, show an error message
-        showError('Error!', data.message, 'error');
+        showerror('Error!', data.message, 'error');
       }
     })
     .catch(error => {
       // If there's an error with the fetch request, show an error message
-      showError('Error!', 'An error occurred while processing the request.', 'error');
+      showerror('Error!', 'An error occurred while processing the request.', 'error');
     });
   });
 
-    // JavaScript to handle the "Edit" button click event
-    document.addEventListener("DOMContentLoaded", function () {
-    const editButtons = document.querySelectorAll(".dropdown-item[data-target='#editHarvestSchedule']");
+  document.addEventListener("click", function (event) {
+  const targetButton = event.target.closest(".dropdown-item[data-target='#editHarvestSchedule']");
+  if (targetButton) {
+    const scheduleId = targetButton.dataset.scheduleId;
+    console.log("Schedule ID:", scheduleId); // Use console.log for debugging
     const editScheduleIdInput = document.getElementById("edit_schedule_id");
-
-    editButtons.forEach(function (button) {
-      button.addEventListener("click", function () {
-        const scheduleId = this.dataset.scheduleId;
-        editScheduleIdInput.value = scheduleId;
-      });
-    });
-  });
-
-  function handleEditButtonClick(scheduleId) {
-  fetch(`../php/get_harvest_schedule.php?schedule_id=${scheduleId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        const schedule = data.schedule;
-        const editScheduleIdInput = document.getElementById("edit_schedule_id");
-        const editDateInput = document.getElementById("edit_schedule_date");
-        const editLocationInput = document.getElementById("edit_location");
-        const editQuantityInput = document.getElementById("edit_quantity_available");
-        const editStatusInput = document.getElementById("edit_status");
-        const editBiddingStatusInput = document.getElementById("edit_bidding_status");
-        const editStartingBidInput = document.getElementById("edit_starting_bid");
-
-        // Populate the input fields with schedule details
-        const rawDate = schedule.date_scheduled;
-const formattedDate = rawDate.split(' ')[0];
-        editDateInput.value = formattedDate;
-        console.log(formattedDate); 
-        console.log(schedule.date_scheduled);
-        editLocationInput.value = schedule.location;
-        editQuantityInput.value = schedule.quantity_available;
-        editStatusInput.value = schedule.status;
-        editBiddingStatusInput.value = schedule.bidding_status;
-        editStartingBidInput.value = schedule.starting_bid;
-        
-        // Set the schedule ID for the form submission
-        editScheduleIdInput.value = schedule.id;
-      } else {
-        console.error(data.message);
-      }
-    })
-    .catch((error) => {
-      console.error("An error occurred while fetching data:", error);
-    });
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  const editButtons = document.querySelectorAll(".dropdown-item[data-target='#editHarvestSchedule']");
-  editButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
-      const scheduleId = this.dataset.scheduleId;
-      handleEditButtonClick(scheduleId);
-    });
-  });
+    editScheduleIdInput.value = scheduleId;
+  }
 });
+document.addEventListener("click", function (event) {
+  // Check if the clicked element has the class "edit-schedule-btn"
+  if (event.target.classList.contains("edit-schedule-btn")) {
+    // Prevent the default link behavior
+    event.preventDefault();
+
+    // Get the schedule ID from the data attribute
+    const scheduleId = event.target.dataset.scheduleId;
+
+    // Fetch the data for the selected schedule using the scheduleId
+    fetch(`../php/get_harvest_schedule.php?schedule_id=${scheduleId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Get a reference to the edit modal
+          const editModal = document.getElementById("editHarvestSchedule");
+
+          // Get the input fields in the edit modal
+
+          const editScheduleIdInput = editModal.querySelector("#edit_schedule_id");
+          const editTypeRiceInput = editModal.querySelector("#edit_type_rice");
+          const editDateInput = editModal.querySelector("#edit_schedule_date");
+          const editLocationInput = editModal.querySelector("#edit_location");
+          const editQuantityInput = editModal.querySelector("#edit_quantity_available");
+          const editStatusInput = editModal.querySelector("#edit_status");
+          const editBiddingStatusInput = editModal.querySelector("#edit_bidding_status");
+          const editStartingBidInput = editModal.querySelector("#edit_starting_bid");
+          const editImagePreview = editModal.querySelector("#previewfieldimage2");
+
+          // Populate the input fields with schedule details
+          const schedule = data.schedule;
+          const rawDate = schedule.date_scheduled;
+          const formattedDate = rawDate.split(" ")[0];
+          editTypeRiceInput.value = schedule.rice_type;
+          editDateInput.value = formattedDate;
+          editLocationInput.value = schedule.location;
+          editQuantityInput.value = schedule.quantity_available;
+          editStatusInput.value = schedule.status;
+          editBiddingStatusInput.value = schedule.bidding_status;
+          editStartingBidInput.value = schedule.starting_bid;
+          editImagePreview.src = schedule.harvest_image;
+
+          // Set the schedule ID for the form submission
+          editScheduleIdInput.value = schedule.id;
+
+          // Show the edit modal
+          $(editModal).modal("show");
+        } else {
+          console.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while fetching data:", error);
+      });
+  }
+});
+
+
 
 // JavaScript to handle the "Save Changes" button click event in the "Edit Harvest Schedule" modal
 document.getElementById("editHarvestScheduleForm").addEventListener("submit", function(event) {

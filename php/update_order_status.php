@@ -39,29 +39,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         switch ($status) {
             case 0:
                 $notificationTitle = "Order Status: Pending";
+                $messageoutput = "Order Status: Pending";
                 break;
             case 1:
                 $notificationTitle = "Order Status: Confirmed";
+                $messageoutput  = "Order Status: Confirmed";
                 break;
             case 2:
                 $notificationTitle = "Order Status: Packed";
+                $messageoutput  = "Order Status: Packed";
                 break;
             case 3:
                 $notificationTitle = "Order Status: Out for Delivery";
+                $messageoutput  = "Order Status: Out for Delivery";
                 break;
             case 4:
                 $notificationTitle = "Order Status: Delivered";
+                $messageoutput  = "Order Status: Delivered";
                 break;
             case 5:
                 $notificationTitle = "Order Status: Cancelled";
+                $messageoutput  = "Order Status: Cancelled";
                 break;
             default:
                 $notificationTitle = "Order Status Updated";
+                $messageoutput  = "Order Status Updated";
                 break;
         }
 
         // Assuming you have a table named "notifications" to store notifications
-        $notificationMessage = "The order with code '{$orderCode}' has been updated to status '{$status}'.";
+        $notificationMessage = "The order with code '{$orderCode}' has been updated to status '{$messageoutput}'.";
 
         // Perform the database insert to create the notification using prepared statements
         $insertQuery = "INSERT INTO `notifications` (order_list_id, buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?, ?)";

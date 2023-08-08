@@ -68,6 +68,9 @@ include_once('../php/notifications.php');
                     <a class="nav-link  mx-3" href="../buyer/marketplace.php">Marketplace</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link  mx-3" href="../buyer/wholesale.php">Wholesale</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
                 </li>
                 <li class="nav-item">
@@ -84,9 +87,6 @@ include_once('../php/notifications.php');
                       }
                       ?>
                   </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">
@@ -180,7 +180,7 @@ include_once('../php/notifications.php');
 			<h1 class="subscribr_text display-3">Explore Now</h1>
       
 			<p class="lorem_text lead">Navigate through our website today and discover the rich history and flavors of Arayat rice for yourself. Thank you for choosing PALE-NGKIHAN!</p>
-      <button type="button" class="btn btn-success btn-rounded btn-lg">Shop Now</button>
+      <a href="../buyer/marketplace.php" class="btn btn-success btn-rounded btn-lg">Shop Now</a>
     
     </div>
     
@@ -205,36 +205,7 @@ include_once('../php/notifications.php');
     <script>
       AOS.init();
 
-          // Add event listener for the click on the notification item
-    document.addEventListener('DOMContentLoaded', function () {
-        const notificationItems = document.querySelectorAll('.notification-item');
-
-        notificationItems.forEach(function (item) {
-            item.addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent the default link behavior
-
-                // Get the notification ID from the data attribute
-                const notificationId = item.getAttribute('data-notification-id');
-
-                // Make an AJAX request to update the is_seen status
-                // Replace 'your_update_endpoint.php' with the actual URL of the PHP script that updates the database
-                fetch('your_update_endpoint.php?notification_id=' + encodeURIComponent(notificationId), {
-                    method: 'POST', // Or 'GET', depending on your server-side implementation
-                })
-                    .then(function (response) {
-                        if (response.ok) {
-                            // Update the UI or perform any other actions to indicate that the notification has been seen
-                            console.log('Notification with ID ' + notificationId + ' marked as seen.');
-                        } else {
-                            console.error('Failed to mark notification as seen.');
-                        }
-                    })
-                    .catch(function (error) {
-                        console.error('An error occurred:', error);
-                    });
-            });
-        });
-    });
+      
     </script>
 </body>
 </html>

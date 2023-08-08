@@ -383,6 +383,8 @@ $(function () {
     <!-- ...remaining code... -->
 
     <!-- REQUIRED SCRIPTS -->
+            <!-- SweetAlert2 -->
+            <script src="../Assets/plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- jQuery -->
     <script src="../Assets/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 5 -->

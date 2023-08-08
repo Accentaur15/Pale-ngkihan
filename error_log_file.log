@@ -1,14 +1,5 @@
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $scheduleDate in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 98
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $location in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 99
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $quantityAvailable in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 100
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $status in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 101
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $biddingStatus in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 102
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Warning:  Undefined variable $startingBid in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 103
-[07-Aug-2023 10:23:33 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' 
-      status = '', 
-      bidding_status = , 
-      starting_bid = NULL,...' at line 4 in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php:97
+[08-Aug-2023 15:25:55 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`pale-ngkihan_db`.`notifications`, CONSTRAINT `fk_notifications_order_code` FOREIGN KEY (`order_code`) REFERENCES `order_list` (`order_code`) ON DELETE CASCADE) in E:\xampp\htdocs\Pale-ngkihan\php\schedule.php:51
 Stack trace:
-#0 E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php(97): mysqli_query(Object(mysqli), 'UPDATE harvest_...')
+#0 E:\xampp\htdocs\Pale-ngkihan\php\schedule.php(51): mysqli_query(Object(mysqli), 'INSERT INTO not...')
 #1 {main}
-  thrown in E:\xampp\htdocs\Pale-ngkihan\php\edit_harvest_schedule.php on line 97
+  thrown in E:\xampp\htdocs\Pale-ngkihan\php\schedule.php on line 51

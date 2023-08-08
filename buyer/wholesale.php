@@ -34,6 +34,42 @@ if (mysqli_num_rows($qry) > 0) {
 $sort_option = isset($_GET['sort']) ? $_GET['sort'] : '';
 $cartItemCount = getCartItemCount($conn, $id);
 include_once('../php/notifications.php'); 
+
+// Function to retrieve bids offered by the user
+function getBidsOffered($conn, $userId) {
+    $userId = mysqli_real_escape_string($conn, $userId);
+    $bids = array();
+
+    $query = "SELECT bb.*, hs.rice_type 
+              FROM buyer_bids bb
+              JOIN harvest_schedule hs ON bb.harvest_schedule_id = hs.id
+              WHERE bb.buyer_id = '{$userId}'";
+
+    $result = mysqli_query($conn, $query);
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $bids[] = $row;
+    }
+
+    return $bids;
+}
+
+
+// Function to get bid status color
+function getBidStatusColor($status) {
+    switch ($status) {
+        case 'pending':
+            return 'warning';
+        case 'accepted':
+            return 'success';
+        case 'rejected':
+            return 'danger';
+        case 'canceled':
+            return 'secondary';
+        default:
+            return 'info';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +77,9 @@ include_once('../php/notifications.php');
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buyer | Marketplace</title>
+    <title>Buyer | Wholesale</title>
+    <!-- SweetAlert2 -->
+<link rel="stylesheet" href="../Assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Google Font: Source Sans Pro -->
@@ -130,10 +168,11 @@ include_once('../php/notifications.php');
             <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="schedules-tab" data-toggle="tab" href="#schedules" role="tab" aria-controls="schedules" aria-selected="true">Schedules</a>
+                <a class="nav-link active" id="schedules-tab" data-bs-toggle="tab" href="#schedules" role="tab" aria-controls="schedules" aria-selected="true">Schedules</a>
+
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="bids-offered-tab" data-toggle="tab" href="#bids-offered" role="tab" aria-controls="bids-offered" aria-selected="false">Bids Offered</a>
+                       <a class="nav-link" id="bids-offered-tab" data-bs-toggle="tab" href="#bids-offered" role="tab" aria-controls="bids-offered" aria-selected="false">Bids Offered</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
@@ -239,13 +278,40 @@ include_once('../php/notifications.php');
                                                 <div class="d-flex">
                                                     <div class="col-auto px-0"><small class="text-muted">Harvest Status: </small></div>
                                                     <div class="col-auto px-0 flex-shrink-1 flex-grow-1">
-                                                        <p class="text-truncate m-0"><small class="text-olive font-weight-bold"> <?= $row['status'] ?></small></p>
+                                                        <p class="text-truncate m-0"><small class="text-olive font-weight-bold"><?php
+// Assuming $status contains one of the three enumerated values: 'upcoming', 'ongoing', or 'completed'
+if ($row['status']  == 'upcoming') {
+    // Output the specified badge for 'upcoming'
+    echo '<span class="badge badge-info bg-gradient-info px-3 ml-1 rounded-pill"> Upcoming </span>';
+} elseif ($row['status'] == 'ongoing') {
+    // Output the specified badge for 'ongoing'
+    echo '<span class="badge badge-primary bg-gradient-primary ml-1 px-3 rounded-pill"> Ongoing </span>';
+} elseif ($row['status']  == 'completed') {
+    // Output the specified badge for 'completed'
+    echo '<span class="badge badge-success bg-gradient-success ml-1 px-3 rounded-pill"> Completed</span>';
+} else {
+    // Output the status without the badge for other cases
+    echo $row['status'] ;
+}
+?></small></p>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex">
                                                     <div class="col-auto px-0"><small class="text-muted">Bidding Status: </small></div>
                                                     <div class="col-auto px-0 flex-shrink-1 flex-grow-1">
-                                                        <p class="m-0 pl-1"><small class="text-olive font-weight-bold"> <?= $row['bidding_status'] == 1 ? 'Open for Bidding' : 'Closed for Bidding' ?></small></p>
+                                                        <p class="m-0 pl-1"><small class="text-olive font-weight-bold"> <?php
+// Assuming $bidding_status contains one of the two values: 0 or 1
+if ( $row['bidding_status'] == 0) {
+    // Output the specified badge for bidding_status = 0
+    echo '<span class="badge badge-danger px-3 ml-1 py-1 rounded-pill">Closed</span>';
+} elseif ( $row['bidding_status'] == 1) {
+    // Output the specified badge for bidding_status = 1
+    echo '<span class="badge badge-success px-3 ml-1 py-1 rounded-pill">Open</span>';
+} else {
+    // Output a default badge for other cases (though this should not happen with only two possible values)
+    echo '<span class="badge badge-danger px-3 ml-1 py-1 rounded-pill">N/A</span>';
+}
+?></small></p>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex">
@@ -276,10 +342,60 @@ include_once('../php/notifications.php');
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="bids-offered" role="tabpanel" aria-labelledby="bids-offered-tab">
-                        <!-- Content for Bids Offered goes here -->
-                        <!-- You can add your content here -->
+        <!-- Bids Offered Tab Content -->
+        <div class="tab-pane fade" id="bids-offered" role="tabpanel" aria-labelledby="bids-offered-tab">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">Bids Offered</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered ">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Bid Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Retrieve bids offered by the user
+                                        $bidsOffered = getBidsOffered($conn, $id);
+
+                                        // Loop through bids offered and populate rows
+                                        foreach ($bidsOffered as $bidRow) {
+                                            echo '<tr>';
+                                            echo '<td>' . $bidRow['rice_type'] . '</td>';
+                                            echo '<td>₱' . ($bidRow['bid_amount'] ? $bidRow['bid_amount'] : 'None') . '</td>';
+                                            echo '<td class="text-center"><span class="badge badge-' . getBidStatusColor($bidRow['bid_status']) . '">' . $bidRow['bid_status'] . '</span></td>';
+                                            echo '<td class="text-center">
+                                            <a class="btn btn-sm btn-primary view_data" href="viewschedule.php?id=' . $bidRow['harvest_schedule_id'] . '">
+                                                <span class="fa-solid fa-eye"></span> View
+                                            </a>';
+                                
+                                    // Show the "Cancel" button only if the status is still "pending"
+                                    if ($bidRow['bid_status'] === 'pending') {
+                                        echo '<button class="ml-1 btn btn-sm btn-danger cancel-button" data-id="' . $bidRow['harvest_schedule_id'] . '">
+                                                  <span class="fa-solid fa-circle-xmark"></span> Cancel
+                                              </button>';
+                                    }
+                                    
+                                    echo '</td>';
+                                            echo '</tr>';
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
                 </div>
             </div>
         </div>
@@ -296,6 +412,8 @@ include_once('../php/notifications.php');
 <!-- ...remaining code... -->
 
 <!-- REQUIRED SCRIPTS -->
+        <!-- SweetAlert2 -->
+        <script src="../Assets/plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- jQuery -->
 <script src="../Assets/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 5 -->
@@ -306,6 +424,40 @@ include_once('../php/notifications.php');
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init();
+     // Listen for click events on the "Cancel" buttons
+     const cancelButtons = document.querySelectorAll('.cancel-button');
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const scheduleId = this.getAttribute('data-id');
+            // Display the confirmation popup
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, submit the cancellation form
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '../php/cancelschedule.php';
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'product_cancel';
+                    input.value = scheduleId;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
+

@@ -195,8 +195,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <div class="card-header">
             <h5 class="card-title"><b>Harvest Schedule Details</b></h5>
         </div>
-        <form id="add-to-cart-form">
-        <input type="hidden" id="product_id" value="<?php echo $product_id; ?>">
+        <form id="harvest-scehdule-form">
+        <input type="hidden" id="product_id" value="<?php echo $harvest_id; ?>">
         <div class="card-body">
             <div class="container-fluid">
                 <div id="msg"></div>
@@ -246,10 +246,10 @@ if ($status == 'upcoming') {
 // Assuming $bidding_status contains one of the two values: 0 or 1
 if ($bidding_status == 0) {
     // Output the specified badge for bidding_status = 0
-    echo '<span class="badge badge-danger px-3 py-1 rounded-0">Closed</span>';
+    echo '<span class="badge badge-danger px-3 py-1 rounded-pill">Closed</span>';
 } elseif ($bidding_status == 1) {
     // Output the specified badge for bidding_status = 1
-    echo '<span class="badge badge-success px-3 py-1 rounded-0">Open</span>';
+    echo '<span class="badge badge-success px-3 py-1 rounded-pill">Open</span>';
 } else {
     // Output a default badge for other cases (though this should not happen with only two possible values)
     echo '<span class="badge badge-danger px-3 py-1 rounded-pill">N/A</span>';
@@ -259,9 +259,43 @@ if ($bidding_status == 0) {
                         </div>
                         <div class="d-flex">
                             <div class="col-auto px-0"><small class="text-muted h6 mr-1">Starting Bid: </small></div>
-                            <div class="col-auto px-0 flex-shrink-1 flex-grow-1"><p class="m-0 pl-3"><small class="text-olive font-weight-bold h6">₱<?= $starting_bid ?></small></p></div>
+                            <div class="col-auto px-0 flex-shrink-1 flex-grow-1"><p class="m-0 pl-3"><small class="text-olive font-weight-bold h6">₱<?= $starting_bid ?> per kg</small></p></div>
                         </div>
                         
+<div class="col-auto px-0"><small class="text-muted h6">Location: </small></div>
+<?php
+function isCoordinateFormat($location) {
+    return preg_match('/Latitude:\s*-?\d+\.\d+,\s*Longitude:\s*-?\d+\.\d+/', $location);
+}
+// Function to extract latitude and longitude from the location string
+function extractCoordinates($location) {
+    $pattern = '/Latitude:\s*(-?\d+\.\d+),\s*Longitude:\s*(-?\d+\.\d+)/';
+    preg_match($pattern, $location, $matches);
+    return array('latitude' => $matches[1], 'longitude' => $matches[2]);
+}
+
+// Assuming $location contains the location value
+if (isCoordinateFormat($location)) {
+    // Extract latitude and longitude values
+    $coordinates = extractCoordinates($location);
+    $latitude = $coordinates['latitude'];
+    $longitude = $coordinates['longitude'];
+
+    // Output the map
+    echo '<div id="map" style="height: 300px;"></div>';
+    echo '<script>
+        var map = L.map("map").setView([' . $latitude . ', ' . $longitude . '], 15);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+        L.marker([' . $latitude . ', ' . $longitude . ']).addTo(map);
+    </script>';
+} else {
+    // Output the location without the map
+    echo '<p class="m-0 pl-3"><small class="text-olive font-weight-bold h6">' . $location . '</small></p>';
+}
+?>
+
                         <?php
 // Assuming $bidding_status contains one of the two values: 0 or 1
 if ($bidding_status == 1) {
@@ -276,11 +310,12 @@ if ($bidding_status == 1) {
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">₱</span>
+                   
                 </div>
-                <input type="number" class="form-control" id="bidAmount" min="1" placeholder="Enter your bid amount">
+                <input type="number" class="form-control" id="bidAmount" min="<?= ($starting_bid == 0) ? 1 : $starting_bid ?>" placeholder="Enter your bid amount" required>
                 <div class="input-group-append">
                     <span class="input-group-text">Per KG</span>
-                    <button class="btn btn-warning text-white " id="submitBid">Submit Bid</button>
+                    <button class="btn btn-warning text-white " id="submitBid" data-harvest-id="<?php echo $harvest_id; ?>">Submit Bid</button>
                 </div>
             </div>
         </div>
@@ -291,44 +326,10 @@ if ($bidding_status == 1) {
         <div class="col-auto px-0"></div>
         <div class="col-auto px-0 flex-shrink-1 flex-grow-1">
             <!-- Add margin using the mt-2 class -->
-            <button class="btn btn-warning text-white mt-2 font-weight-bold" id="getScheduleBtn"><i class="fas fa-calendar-plus"></i> Get the Schedule</button>
+            <button class="btn btn-warning text-white mt-2 font-weight-bold" id="getScheduleBtn" data-harvest-id="<?php echo $harvest_id; ?>"><i class="fa-solid fa-comments-dollar"></i>&nbsp;Make Offer</button>
         </div>
     </div>
 <?php } ?>
-
-<?php
-// Function to extract latitude and longitude from the location string
-function extractCoordinates($location) {
-    $pattern = '/Latitude:\s*(-?\d+\.\d+),\s*Longitude:\s*(-?\d+\.\d+)/';
-    preg_match($pattern, $location, $matches);
-    return array('latitude' => $matches[1], 'longitude' => $matches[2]);
-}
-
-// Assuming $location contains the location value
-if (isCoordinateFormat($location)) {
-    // Extract latitude and longitude values
-    $coordinates = extractCoordinates($location);
-    $latitude = $coordinates['latitude'];
-    $longitude = $coordinates['longitude'];
-    ?>
-    <div id="map" style="height: 400px;"></div>
-    <script>
-        var latitude = <?php echo $latitude; ?>;
-        var longitude = <?php echo $longitude; ?>;
-        
-        var map = L.map('map').setView([latitude, longitude], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([latitude, longitude]).addTo(map);
-    </script>
-    <?php
-} else {
-    // Output the location without the map
-    echo '<p>' . $location . '</p>';
-}
-?>
-
 
 
 
@@ -361,13 +362,130 @@ if (isCoordinateFormat($location)) {
     </footer>
 
 <script>
+  $(document).ready(function() {
+    // Add a click event handler to the "Get Schedule" button
+    $("#getScheduleBtn").click(function(event) {
+        event.preventDefault();
 
+        var harvestId = $(this).data("harvest-id"); // Extract the harvest_id from the button's data attribute
 
+        // Display a confirmation dialog
+        Swal.fire({
+            title: 'Get Schedule Confirmation',
+            text: 'Are you sure you want to get the schedule?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, get it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform an AJAX request to get the schedule
+                $.ajax({
+                    url: '../php/schedule.php',
+                    method: 'GET',
+                    data: { harvest_id: harvestId }, // Pass the harvest_id in the request
+                    success: function(response) {
+                        // Handle the response here, maybe display a success message
+                        var responseData = JSON.parse(response);
+                        if (responseData.message) {
+                            showAlert('Schedule Obtained', responseData.message, 'success');
+                        } else if (responseData.error) {
+                            showerror('Error', responseData.error, 'error');
+                        } else {
+                            showerror('Error', 'An error occurred while getting the schedule.', 'error');
+                        }
+                    },
+                    error: function(error) {
+                        // Handle errors here, maybe display an error message
+                        showError('Error', 'An error occurred while getting the schedule.', 'error');
+                    }
+                });
+            }
+        });
+    });
 
+    $("#submitBid").click(function(event) {
+        event.preventDefault(); // Prevent the default click behavior
+
+        var harvestId = $(this).data("harvest-id"); // Extract the harvest_id from the button's data attribute
+        var bidAmount = $("#bidAmount").val(); // Get the bid amount from the input field
+
+        // Validate the bid amount, you can add more validation logic here
+        if (bidAmount.trim() === '') {
+            showerror('Error', 'Please enter a valid bid amount.', 'error');
+            return;
+        }
+
+        // Perform an AJAX request to submit the bid
+        $.ajax({
+            url: '../php/schedule.php',
+            method: 'POST',
+            data: { harvest_id: harvestId, bidAmount: bidAmount }, // Pass the harvest_id and bidAmount in the request
+            success: function(response) {
+                //console.log(response);
+                // Handle the response here, maybe display a success message
+                var responseData = JSON.parse(response);
+                if (responseData.message) {
+                    showAlert('Bid Submitted', responseData.message, 'success');
+                } else if (responseData.error) {
+                    showerror('Error', responseData.error, 'error');
+                } else {
+                    showerror('Error', 'An error occurred while submitting the bid.', 'error');
+                }
+            },
+            error: function(error) {
+                // Handle errors here, maybe display an error message
+                showerror('Error', 'An error occurred while submitting the bid.', 'error');
+            }
+        });
+    });
+});
+
+  // Define the showAlert function
+  function showAlert(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      position: 'top',
+      timer: 2000,
+      showConfirmButton: false,
+      toast: true,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'swal-popup',
+        title: 'swal-title',
+        content: 'swal-text'
+      }
+    }).then(function () {
+      // Reload the page after the SweetAlert is closed
+      location.reload();
+    });
+  }
+
+    // Define the showAlert function
+    function showerror(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      position: 'top',
+      timer: 2000,
+      showConfirmButton: false,
+      toast: true,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'swal-popup',
+        title: 'swal-title',
+        content: 'swal-text'
+      }
+    });
+  }
 
  
 
 </script>
+
 
  <!-- REQUIRED SCRIPTS -->
 

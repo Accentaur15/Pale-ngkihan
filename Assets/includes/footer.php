@@ -163,7 +163,15 @@ $("#harvestScheduleTable").DataTable({
     "autoWidth": false,
     "responsive": true,
       });
-
+      $("#BidOffersListTable").DataTable({
+    "paging": true,
+    "lengthChange": true,
+    "searching": true,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+  });
       
       $("#productListTable").DataTable({
     "paging": true,

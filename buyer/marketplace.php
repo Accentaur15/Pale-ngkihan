@@ -177,6 +177,10 @@ include_once('../php/notifications.php');
                         </div>
                         <?php endwhile; ?>
                         </div>
+
+                        <div class="form-group mt-2">
+    <button id="clear-filter-button" class="btn btn-secondary btn-block">Clear Filters</button>
+</div>
                     </div>
                     </div>
 
@@ -375,6 +379,29 @@ $(function () {
   });
 
 });
+
+$(document).ready(function() {
+  // ... Your existing code ...
+
+  // Clear Filters button functionality
+  $('#clear-filter-button').click(function(e) {
+    e.preventDefault();
+
+    // Clear category checkboxes
+    $('.cat_item').prop('checked', false);
+    $('#cat_all').prop('checked', true); // Check the "All" checkbox
+
+    // Clear search input
+    $('#search').val('');
+
+    // Redirect to the original page without filters
+    var urlWithoutFilters = window.location.pathname;
+    window.location.href = urlWithoutFilters;
+  });
+
+  // ... Your existing code ...
+});
+
 </script>
 
 <!-- ...remaining code... -->

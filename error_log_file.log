@@ -1,5 +1,0 @@
-[08-Aug-2023 15:25:55 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`pale-ngkihan_db`.`notifications`, CONSTRAINT `fk_notifications_order_code` FOREIGN KEY (`order_code`) REFERENCES `order_list` (`order_code`) ON DELETE CASCADE) in E:\xampp\htdocs\Pale-ngkihan\php\schedule.php:51
-Stack trace:
-#0 E:\xampp\htdocs\Pale-ngkihan\php\schedule.php(51): mysqli_query(Object(mysqli), 'INSERT INTO not...')
-#1 {main}
-  thrown in E:\xampp\htdocs\Pale-ngkihan\php\schedule.php on line 51

@@ -46,7 +46,7 @@ Harvest Schedule
 </a>
 </li>
 <li class="nav-item">
-<a href="#" class="nav-link keychainify-checked">
+<a href="../seller/bid_offers.php" class="nav-link keychainify-checked">
 <i class="nav-icon fa-solid fa-money-bill"></i>
 <p>Bid Offers</p>
 </a>

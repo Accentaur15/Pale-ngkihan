@@ -89,6 +89,9 @@ include_once('../php/notifications.php');
                     <a class="nav-link mx-3" href="../buyer/marketplace.php">Marketplace</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/wholesale.php">Wholesale</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
                 </li>
                 <li class="nav-item">
@@ -103,9 +106,6 @@ include_once('../php/notifications.php');
                       }
                       ?>
                   </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">

@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Add notification message for successful order placement for this seller
             $order_code = mysqli_fetch_assoc(mysqli_query($conn, "SELECT order_code FROM order_list WHERE id = '$order_id'"))['order_code'];
             $notification_message = "Your order with Order Number $order_code has been successfully placed.\n";
-            $insert_notification_query = "INSERT INTO notifications (order_list_id, buyer_id, order_code, notification_title, message) VALUES ('$order_id','$id', '$order_code','$notification_title', '$notification_message')";
+            $insert_notification_query = "INSERT INTO notifications (buyer_id, order_code, notification_title, message) VALUES ('$id', '$order_code','$notification_title', '$notification_message')";
             mysqli_query($conn, $insert_notification_query);
         }
 

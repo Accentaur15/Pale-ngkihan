@@ -90,18 +90,22 @@ function getBidStatusColor($status) {
     <!-- Theme style -->
     <link rel="stylesheet" href="../Assets/dist/css/adminlte.min.css">
     <!-- CSS -->
-    <link href="marketplace.css" rel="stylesheet">
+    <link href="wholesale.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
     <link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
+      <!-- DataTables -->
+  <link rel="stylesheet" href="../Assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../Assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../Assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<!-- Navigation Bar -->
+
 <!--Navigation Bar-->
 <nav class="navbar navbar-expand-md navbar-light" style="background: rgb(229, 235, 232);">
     <div class="container-fluid">
@@ -122,7 +126,7 @@ function getBidStatusColor($status) {
                     <a class="nav-link  mx-3" href="../buyer/marketplace.php">Marketplace</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active mx-3" href="../buyer/marketplace.php">Wholesale</a>
+                    <a class="nav-link active mx-3" href="../buyer/wholesale.php">Wholesale</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
@@ -148,7 +152,7 @@ function getBidStatusColor($status) {
                         echo '<img src="../' . $profilePicture . '" alt="Profile Picture" class="avatar-image img-fluid">';
                         ?>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu dropdown-menu-right custom-dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="dropdown-header text-center text-md font-weight-bold text-dark"><?php echo $fname . ' ' . $lname; ?></li>
                         <li class="text-center"><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
                         <li class="text-center"><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id ?>">Log out</a></li>
@@ -195,16 +199,36 @@ function getBidStatusColor($status) {
                         <label for="sort-select">Sort By:</label>
                         <div class="input-group">
                             <select class="form-control" id="sort-select">
-                            <option value="price_asc">Price: Low to High</option>
-                            <option value="price_desc">Price: High to Low</option>
+                            <option value="starting_bid_asc">Starting Bid: Low to High</option>
+    <option value="starting_bid_desc">Starting Bid: High to Low</option>
                             <option value="name_asc">Name: A to Z</option>
                             <option value="name_desc">Name: Z to A</option>
+                            <option value="date_asc">Date: Old to New</option>
+    <option value="date_desc">Date: New to Old</option>
                             </select>
                             <div class="input-group-append">
                             <button class="btn btn-success" id="sort-button">Sort</button>
                             </div>
                         </div>
                         </div>
+
+                        <div class="form-group">
+    <label for="date-range">Date Range:</label>
+    <div class="input-group">
+        <input type="date" id="date-start" name="date_start" class="form-control" placeholder="Start date">
+        <span class="input-group-text">to</span>
+        <input type="date" id="date-end" name="date_end" class="form-control" placeholder="End date">
+        <div class="input-group-append">
+            <button class="btn btn-success" id="filter-button">Filter</button>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <button id="clear-filter-button" class="btn btn-secondary btn-block">Clear Filters</button>
+</div>
+
+
                        
                     </div>
                     
@@ -219,7 +243,7 @@ function getBidStatusColor($status) {
                                                     <form action="" id="search-frm">
                                                         <div class="input-group">
                                                         <div class="input-group-prepend"><span class="input-group-text">Search</span></div>
-                                                <input type="search" id="search" class="form-control" value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+                                                        <input type="search" id="search" name="search" class="form-control" value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
                                                 <div class="input-group-append"><span class="input-group-text"><i class="fa fa-search"></i></span></div>
                                                         </div>
                                                     </form>
@@ -227,36 +251,60 @@ function getBidStatusColor($status) {
                                             </div>
                                             <div class="row" id="harvest_list">
                                                 <?php 
-                                                $swhere = "";
+                                              $swhere = "";
 
-                                                if (isset($_GET['search']) && !empty($_GET['search'])) {
-                                                    $swhere .= " and (p.product_name LIKE '%{$_GET['search']}%' or p.product_description LIKE '%{$_GET['search']}%' or c.name LIKE '%{$_GET['search']}%' or s.shop_name LIKE '%{$_GET['search']}%') ";
-                                                }
+                                              if (isset($_GET['search']) && !empty($_GET['search'])) {
+                                                  $searchTerm = mysqli_real_escape_string($conn, $_GET['search']); // Sanitize the search term
+                                                  $swhere .= " AND (hs.rice_type LIKE '%$searchTerm%' OR hs.location LIKE '%$searchTerm%' OR sa.shop_name LIKE '%$searchTerm%') ";
+                                              }
+                                              
 
-                                                // Sort option handling
-                                                $sortSql = "";
+                                                $sort_option = isset($_GET['sort']) ? $_GET['sort'] : '';
+
+                                                // Define the default sorting SQL if no sort option is provided
+                                                $defaultSortSql = " ORDER BY RAND()";
+                                                
                                                 switch ($sort_option) {
-                                                    case 'price_asc':
-                                                        $sortSql = " ORDER BY p.price ASC";
-                                                        break;
-                                                    case 'price_desc':
-                                                        $sortSql = " ORDER BY p.price DESC";
-                                                        break;
                                                     case 'name_asc':
-                                                        $sortSql = " ORDER BY p.product_name ASC";
+                                                        $sortSql = " ORDER BY hs.rice_type ASC";
                                                         break;
                                                     case 'name_desc':
-                                                        $sortSql = " ORDER BY p.product_name DESC";
+                                                        $sortSql = " ORDER BY hs.rice_type DESC";
                                                         break;
+                                                    case 'starting_bid_asc':
+                                                        $sortSql = " ORDER BY hs.starting_bid ASC";
+                                                        break;
+                                                    case 'starting_bid_desc':
+                                                        $sortSql = " ORDER BY hs.starting_bid DESC";
+                                                        break;
+                                                        case 'date_asc':
+                                                            $sortSql = " ORDER BY hs.date_scheduled ASC";
+                                                            break;
+                                                        case 'date_desc':
+                                                            $sortSql = " ORDER BY hs.date_scheduled DESC";
                                                     default:
-                                                        $sortSql = " ORDER BY RAND()";
+                                                        $sortSql = $defaultSortSql;
                                                         break;
                                                 }
+                                                
+                                                // Retrieve the start and end dates from the URL parameters
+$startDate = isset($_GET['date_start']) ? $_GET['date_start'] : '';
+$endDate = isset($_GET['date_end']) ? $_GET['date_end'] : '';
 
+// Create the date range condition only if both start and end dates are provided
+$dateRangeCondition = '';
+if (!empty($startDate) && !empty($endDate)) {
+    $formattedStartDate = date("Y-m-d", strtotime($startDate));
+    $formattedEndDate = date("Y-m-d", strtotime($endDate));
+    $dateRangeCondition = " AND hs.date_scheduled BETWEEN '{$formattedStartDate}' AND '{$formattedEndDate}' ";
+}
+                                                
+                                                
                                                 $query = "SELECT hs.*, sa.shop_name as vendor FROM harvest_schedule hs 
                                                 INNER JOIN seller_accounts sa ON hs.seller_id = sa.id 
-                                                WHERE hs.status IN ('upcoming', 'ongoing') {$swhere} 
+                                                WHERE hs.status IN ('upcoming', 'ongoing') {$swhere}  {$dateRangeCondition}
                                                 {$sortSql}";
+                                      
 
                                                 $products = $conn->query($query);
                                                 while ($row = $products->fetch_assoc()):
@@ -315,6 +363,12 @@ if ( $row['bidding_status'] == 0) {
                                                     </div>
                                                 </div>
                                                 <div class="d-flex">
+                                                    <div class="col-auto px-0"><small class="text-muted">Starting Bid:</small></div>
+                                                    <div class="col-auto px-0 flex-shrink-1 flex-grow-1">
+                                                        <p class="m-0 pl-3"><small class="text-olive font-weight-bold">₱<?= $row['starting_bid'] ?> per kg</small></p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex">
                                                     <div class="col-auto px-0"><small class="text-muted">Quantity:</small></div>
                                                     <div class="col-auto px-0 flex-shrink-1 flex-grow-1">
                                                         <p class="m-0 pl-3"><small class="text-olive font-weight-bold"><?= $row['quantity_available'] ?></small></p>
@@ -352,7 +406,7 @@ if ( $row['bidding_status'] == 0) {
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered ">
+                            <table id="bids-offered-table" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>Product Name</th>
@@ -370,22 +424,37 @@ if ( $row['bidding_status'] == 0) {
                                         foreach ($bidsOffered as $bidRow) {
                                             echo '<tr>';
                                             echo '<td>' . $bidRow['rice_type'] . '</td>';
-                                            echo '<td>₱' . ($bidRow['bid_amount'] ? $bidRow['bid_amount'] : 'None') . '</td>';
+                                            echo '<td>' . ($bidRow['bid_amount'] !== null ? '₱' . $bidRow['bid_amount'] : 'None') . '</td>';
+
                                             echo '<td class="text-center"><span class="badge badge-' . getBidStatusColor($bidRow['bid_status']) . '">' . $bidRow['bid_status'] . '</span></td>';
                                             echo '<td class="text-center">
-                                            <a class="btn btn-sm btn-primary view_data" href="viewschedule.php?id=' . $bidRow['harvest_schedule_id'] . '">
-                                                <span class="fa-solid fa-eye"></span> View
-                                            </a>';
-                                
-                                    // Show the "Cancel" button only if the status is still "pending"
-                                    if ($bidRow['bid_status'] === 'pending') {
-                                        echo '<button class="ml-1 btn btn-sm btn-danger cancel-button" data-id="' . $bidRow['harvest_schedule_id'] . '">
-                                                  <span class="fa-solid fa-circle-xmark"></span> Cancel
-                                              </button>';
-                                    }
-                                    
-                                    echo '</td>';
-                                            echo '</tr>';
+                                            <div class="dropdown">
+                                                <button class="btn btn-flat border btn-light btn-sm dropdown-toggle dropdown-icon" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                                                    <a class="dropdown-item view_data" href="viewschedule.php?id=' . $bidRow['harvest_schedule_id'] . '">
+                                                        <span class="fa-solid fa-eye text-dark"></span> View
+                                                    </a>
+                                                    
+                                                    <div class="dropdown-divider"></div>';
+                                        if ($bidRow['bid_status'] === 'pending') {
+                                            echo '<a class="dropdown-item cancel-button" data-id="' . $bidRow['harvest_schedule_id'] . '">
+                                                    <span class="fa-solid fa-circle-xmark text-danger"></span> Cancel
+                                                </a>';
+                                        }
+                                        echo '</div>
+                                            </div>
+                                        </td>';
+                                        
+                                                               
+                                        
+                                        
+
+                            
+                                          echo '</tr>';
                                         }
                                         ?>
                                     </tbody>
@@ -422,41 +491,153 @@ if ( $row['bidding_status'] == 0) {
 <script src="../Assets/dist/js/adminlte.min.js"></script>
 <!-- Animation JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="../Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="../Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="../Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/jszip/jszip.min.js"></script>
+        <script src="../Assets/plugins/pdfmake/pdfmake.min.js"></script>
+        <script src="../Assets/plugins/pdfmake/vfs_fonts.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script>
+
+$(document).ready(function() {
+
+    $('#filter-button').click(function () {
+    const startDate = $('#date-start').val();
+    const endDate = $('#date-end').val();
+    const currentURL = new URL(window.location.href);
+
+    // Update the URL parameters with the selected start and end dates
+    currentURL.searchParams.set('date_start', startDate);
+    currentURL.searchParams.set('date_end', endDate);
+
+    // Redirect to the updated URL
+    window.location.href = currentURL.toString();
+});
+
+
+     // Capture the search form submit
+     $('#search-frm').submit(function (e) {
+        e.preventDefault(); // Prevent the default form submission
+        
+        const searchTerm = $('#search').val();
+        const currentURL = new URL(window.location.href);
+
+        // Update the URL parameter with the search term
+        currentURL.searchParams.set('search', searchTerm);
+
+        // Redirect to the updated URL
+        window.location.href = currentURL.toString();
+    });
+// Capture the sort button click
+$('#sort-button').click(function () {
+    const selectedOption = $('#sort-select').val();
+    const currentURL = new URL(window.location.href);
+
+    // Update the URL parameter with the selected sorting option
+    currentURL.searchParams.set('sort', selectedOption);
+
+    // Redirect to the updated URL
+    window.location.href = currentURL.toString();
+});
+
+});
+
     AOS.init();
      // Listen for click events on the "Cancel" buttons
      const cancelButtons = document.querySelectorAll('.cancel-button');
-    cancelButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const scheduleId = this.getAttribute('data-id');
-            // Display the confirmation popup
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You won\'t be able to revert this!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, cancel it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // If confirmed, submit the cancellation form
-                    const form = document.createElement('form');
-                    form.method = 'post';
-                    form.action = '../php/cancelschedule.php';
+     cancelButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const scheduleId = this.getAttribute('data-id');
+        // Display the confirmation popup
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, submit the cancellation form
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.action = '../php/cancelschedule.php';
 
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'product_cancel';
-                    input.value = scheduleId;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'product_cancel';
+                input.value = scheduleId;
 
-                    form.appendChild(input);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+
+                // Show success alert using showAlert function
+                showAlert('Cancelled!', 'Your bid has been successfully cancelled.', 'success');
+            }
         });
     });
+});
+
+
+// Add an event listener to the "Clear Filter" button
+document.getElementById('clear-filter-button').addEventListener('click', function () {
+    // Get the current URL
+    const currentURL = new URL(window.location.href);
+
+    // Remove the query parameters related to filters
+    currentURL.searchParams.delete('search');
+    currentURL.searchParams.delete('sort');
+    currentURL.searchParams.delete('date_start');
+    currentURL.searchParams.delete('date_end');
+
+    // Redirect to the updated URL without filters
+    window.location.href = currentURL.toString();
+});
+
+
+
+      // Define the showAlert function
+  function showAlert(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      position: 'top',
+      timer: 2000,
+      showConfirmButton: false,
+      toast: true,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'swal-popup',
+        title: 'swal-title',
+        content: 'swal-text'
+      }
+    }).then(function () {
+      // Reload the page after the SweetAlert is closed
+      location.reload();
+    });
+  }
+
+    $(document).ready(function() {
+    $("#bids-offered-table").DataTable({
+        "paging": true,
+    "lengthChange": true,
+    "searching": true,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+    });
+});
 </script>
 </body>
 </html>

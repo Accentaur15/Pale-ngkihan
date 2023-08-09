@@ -302,11 +302,13 @@ include('../Assets/includes/sidebar.php');
                       $status = $scheduleRow['status'];
                       $biddingStatus = $scheduleRow['bidding_status'] == 1 ? 'Open for Bidding' : 'Closed for Bidding';
                       $startingbid = $scheduleRow['starting_bid'];
+                      $dateFormatted = date("F j, Y", strtotime($date));
                       ?>
                       <tr>
                         <td><?= $count++; ?></td>
                         <td><?=$typeofrice ?></td>
-                        <td><?= $date; ?></td>
+                        
+                        <td><?= $dateFormatted ?></td>
                         <td class="text-center align-middle"><img class="product-image border border-gray img-thumbnail product-img" src="<?=$image; ?>"  alt="fieldimage"  onclick="showFullImage(this)"></td>
                         <td class="text-center" >  <?php
   // Check if the location contains GPS coordinates

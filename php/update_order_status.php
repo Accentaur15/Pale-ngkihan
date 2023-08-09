@@ -9,6 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve the form data
     $orderCode = $_POST['order_code'];
     $status = $_POST['status'];
+    $buyerId = $_POST['buyer_id'];
 
     // Perform the database update
     // Assuming you have a table named "order_list" with columns "id" and "order_status"
@@ -20,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $updateStatement->close();
 
         // If the database update is successful, retrieve additional information from the "notifications" table
-        $selectQuery = "SELECT order_list_id, buyer_id FROM `notifications` WHERE `order_code` = ?";
+        $selectQuery = "SELECT buyer_id FROM `notifications` WHERE `order_code` = ?";
         $selectStatement = $conn->prepare($selectQuery);
         $selectStatement->bind_param('s', $orderCode);
         $selectStatement->execute();
@@ -31,8 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $notificationData = $notificationResult->fetch_assoc();
 
             // Additional information retrieved from the "notifications" table
-            $orderListId = $notificationData['order_list_id'];
-            $buyerId = $notificationData['buyer_id'];
+            //$buyerId = $notificationData['buyer_id'];
         } 
 
         // Set the notification title based on the selected order status
@@ -70,11 +70,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Assuming you have a table named "notifications" to store notifications
         $notificationMessage = "The order with code '{$orderCode}' has been updated to status '{$messageoutput}'.";
 
-        // Perform the database insert to create the notification using prepared statements
-        $insertQuery = "INSERT INTO `notifications` (order_list_id, buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?, ?)";
+        $insertQuery = "INSERT INTO `notifications` (buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?)";
         $insertStatement = $conn->prepare($insertQuery);
-        $insertStatement->bind_param('iisss', $orderListId, $buyerId, $notificationTitle, $notificationMessage, $orderCode);
-
+        $insertStatement->bind_param('isss', $buyerId, $notificationTitle, $notificationMessage, $orderCode);
+        
         if (!$insertStatement->execute()) {
             // If the database insert fails, return an error response
             $response = array(

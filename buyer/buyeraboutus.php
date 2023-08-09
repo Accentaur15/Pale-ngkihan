@@ -39,10 +39,9 @@ include_once('../php/notifications.php');
  <!--bootstrap-->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
  <!--logo-->
- <link rel="apple-touch-icon" sizes="180x180" href="Assets/logo/apple-touch-icon.png"/>
- <link rel="icon" type="image/png" sizes="32x32" href="Assets/logo/favicon-32x32.png"/>
- <link rel="icon" type="image/png" sizes="16x16" href="Assets/logo/favicon-16x16.png"/>
- <link rel="manifest" href="Assets/logo/site.webmanifest">
+ <link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
+ <link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
+ <link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
  <!--Animation-->
  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
  
@@ -67,6 +66,9 @@ include_once('../php/notifications.php');
                     <a class="nav-link  mx-3" href="../buyer/marketplace.php">Marketplace</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/wholesale.php">Wholesale</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link active mx-3" href="buyeraboutus.php">About Us</a>
                 </li>
                 <li class="nav-item">
@@ -81,9 +83,6 @@ include_once('../php/notifications.php');
                       }
                       ?>
                 </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">

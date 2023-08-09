@@ -103,10 +103,13 @@ include_once('../php/notifications.php');
                     <a class="nav-link mx-3" href="../buyer/marketplace.php">Marketplace</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link  mx-3" href="../buyer/wholesale.php">Wholesale</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-3" href="#">My Orders</a>
+                    <a class="nav-link mx-3" href="../buyer/myorders.php">My Orders</a>
                 </li>
                 <?php include('../Assets/includes/notification.php');?>
                 <li class="nav-item">
@@ -117,9 +120,6 @@ include_once('../php/notifications.php');
                         }
                         ?>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">
@@ -163,14 +163,26 @@ include_once('../php/notifications.php');
 
                
                               <?php if (count($notifications) > 0) : ?>
-                                    <?php foreach ($notifications as $notification) : ?>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <p class="card-text"><?php echo $notification['message']; ?></p>
-                                                <small class="text-muted"><?php echo $notification['timestamp']; ?></small>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
+<!-- Inside the loop -->
+<?php foreach ($notifications as $notification) : ?>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="card-text"><?php echo $notification['message']; ?></p>
+                    <small class="text-muted"><?php echo $notification['timestamp']; ?></small>
+                </div>
+     
+                    <a href="#" class="delete-notification" data-notification-id="<?php echo $notification['id']; ?>">
+                        <i class="fas fa-trash-alt text-danger"></i> <!-- White delete icon -->
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+
                                 <?php else : ?>
                                     <p>No notifications to display.</p>
                                 <?php endif; ?>
@@ -208,6 +220,87 @@ include_once('../php/notifications.php');
 <script src="../Assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
         <script>
             AOS.init();
+
+            $(document).ready(function() {
+        // Define the showAlert function
+        function showAlert(title, text, icon) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                position: 'top',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal-popup',
+                    title: 'swal-title',
+                    content: 'swal-text'
+                }
+            }).then(function () {
+                // Reload the page after the SweetAlert is closed
+                location.reload();
+            });
+        }
+
+        // Handle notification deletion
+        $('.delete-notification').click(function(e) {
+            e.preventDefault();
+            var notificationId = $(this).data('notification-id');
+
+            // Show SweetAlert2 confirmation dialog
+            Swal.fire({
+                title: 'Confirm Deletion',
+                text: 'Are you sure you want to delete this notification?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If user confirms, send AJAX request to delete the notification
+                    $.post('../php/delete_notification.php', { notification_id: notificationId }, function(data) {
+                        if (data.success) {
+                            console.log(data);
+                            // Remove the deleted notification card from the DOM
+                            $(e.target).closest('.card').remove();
+                            // Show success notification
+                            showAlert('Deleted!', 'The notification has been deleted.', 'success');
+                        } else {
+                            // Show error notification
+                            console.error(data.error); 
+                            showAlert('Deleted!', 'The notification has been deleted.', 'success');
+                        }
+                    }).done(function(response) {
+    console.log(response); // Log the response to the console
+});;
+                }
+            });
+        });
+    });
+
+        // Define the showAlert function
+        function showerror(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      position: 'top',
+      timer: 2000,
+      showConfirmButton: false,
+      toast: true,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'swal-popup',
+        title: 'swal-title',
+        content: 'swal-text'
+      }
+    });
+  }
+
         </script>
     </div>
     <!-- Footer -->

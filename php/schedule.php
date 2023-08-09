@@ -41,14 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     } else {
         // Insert the schedule into the buyer_schedules table
         $insertQuery = mysqli_query($conn, "INSERT INTO buyer_bids (buyer_id, harvest_schedule_id, bid_code, bid_status) VALUES ('$buyer_id', '$harvest_id', '$order_code', 'pending')");
+        $notificationMessage = "The bid order with the code '" . $order_code . "' has been succesfully been placed";
+        $notificationTitle = "Bid Status: Bid Placed";
+        // Prepare the notification insert query
+        $insertnotificationQuery = "INSERT INTO `notifications` (buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?)";
+        $insertnotificationStmt = mysqli_prepare($conn, $insertnotificationQuery);
+        mysqli_stmt_bind_param($insertnotificationStmt, "isss", $buyer_id, $notificationTitle, $notificationMessage, $order_code);
+        $insertnotificationResult = mysqli_stmt_execute($insertnotificationStmt);
 
-        if ($insertQuery) {
+        if ($insertQuery && $insertnotificationResult) {
             // Successful insertion for "Get Schedule"
             echo json_encode(array('message' => 'Schedule added successfully.'));
         } else {
             // Error in insertion for "Get Schedule"
             echo json_encode(array('error' => 'Error adding schedule.'));
         }
+
+        // Close the prepared statement
+        mysqli_stmt_close($insertnotificationStmt);
     }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
     $unique_id = $_SESSION['unique_id'];
@@ -72,14 +82,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     // Insert the bid amount into the buyer_bids table
     $insertBidQuery = mysqli_query($conn, "INSERT INTO buyer_bids (harvest_schedule_id, buyer_id, bid_amount, bid_code, bid_status) VALUES ('$harvest_id', '$buyer_id', '$bidAmount', '$order_code', 'pending')");
+    $notificationMessage = "The bid order with the code '" . $order_code . "' that has a bid amount of '₱" . $bidAmount . "' has been succesfully been placed";
+    $notificationTitle = "Bid Status: Bid Placed";
+    // Prepare the notification insert query
+    $insertnotificationQuery = "INSERT INTO `notifications` (buyer_id, notification_title, message, order_code) VALUES (?, ?, ?, ?)";
+    $insertnotificationStmt = mysqli_prepare($conn, $insertnotificationQuery);
+    mysqli_stmt_bind_param($insertnotificationStmt, "isss", $buyer_id, $notificationTitle, $notificationMessage, $order_code);
+    $insertnotificationResult = mysqli_stmt_execute($insertnotificationStmt);
 
-    if ($insertBidQuery) {
+    if ($insertBidQuery && $insertnotificationResult) {
         // Successful insertion for "Submit Bid"
         echo json_encode(array('message' => 'Bid submitted successfully.'));
     } else {
         // Error in insertion for "Submit Bid"
         echo json_encode(array('error' => 'Error submitting bid.'));
     }
+
+     // Close the prepared statement
+     mysqli_stmt_close($insertnotificationStmt);
 } else {
     // Handle invalid request method
     echo json_encode(array('error' => 'Invalid request method.'));

@@ -41,6 +41,69 @@
 
 
 <script>
+
+// Function to handle the bid action
+function handleBidAction(bidId, action, harvestScheduleId = null) {
+  $.ajax({
+    url: '../php/handle_bid_action.php',
+    method: 'POST',
+    data: { bid_id: bidId, action: action, harvest_schedule_id: harvestScheduleId },
+    dataType: 'json',
+    success: function(response) {
+      if (response.success) {
+        showAlert('Success', response.message, 'success');
+      } else {
+        showerror('Error', response.message, 'error');
+      }
+    },
+    error: function() {
+      showerror('Error', 'An error occurred while processing the request.', 'error');
+    }
+  });
+}
+
+// Function to handle bid action (accept, reject, cancel) with confirmation
+function handleBidActionWithConfirmation(bidId, action, harvestScheduleId = null) {
+  // Show a confirmation dialog before proceeding
+  Swal.fire({
+    title: 'Confirm Action',
+    text: 'Are you sure you want to ' + action + ' this bid?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, ' + action + ' it!',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // User confirmed, proceed with the bid action
+      handleBidAction(bidId, action, harvestScheduleId);
+    }
+  });
+}
+
+// Function to handle the "Accept" button click
+$('.accept-bid-btn').click(function() {
+  var bidId = $(this).data('bid-id');
+  var harvestScheduleId = $(this).data('harvest-schedule-id');
+  handleBidActionWithConfirmation(bidId, 'accept', harvestScheduleId);
+});
+
+// Function to handle the "Reject" button click
+$('.reject-bid-btn').click(function() {
+  var bidId = $(this).data('bid-id');
+  handleBidActionWithConfirmation(bidId, 'reject');
+});
+
+// Function to handle the "Cancel" button click
+$('.cancel-bid-btn').click(function() {
+  var bidId = $(this).data('bid-id');
+  handleBidActionWithConfirmation(bidId, 'cancel');
+});
+
+
+
+
 // Function to generate star rating HTML based on the rating value
 function generateStarRating(rating) {
   const fullStar = '<i class="fas fa-star"></i>';

@@ -102,7 +102,7 @@ include('../Assets/includes/sidebar.php');
                 <?php
 
 $bidQuery = mysqli_query($conn, "
-SELECT bb.id AS bid_id, bb.bid_code, bb.bid_amount, bb.buyer_id, hs.date_scheduled, bb.bid_status, hs.rice_type, hs.date_scheduled
+SELECT bb.id AS bid_id, bb.bid_code, bb.bid_amount, bb.buyer_id, hs.date_scheduled, bb.bid_status, hs.rice_type, hs.date_scheduled, hs.id AS harvest_schedule_id
 FROM buyer_bids bb
 INNER JOIN harvest_schedule hs ON bb.harvest_schedule_id = hs.id
 WHERE hs.seller_id = '{$sellerid}'
@@ -111,6 +111,7 @@ WHERE hs.seller_id = '{$sellerid}'
 if (mysqli_num_rows($bidQuery) > 0) {
     $count = 1;
     while ($bidRow = mysqli_fetch_assoc($bidQuery)) {
+      $harvestScheduleId = $bidRow['harvest_schedule_id'];
       $bidId = $bidRow['bid_id'];
       $bidCode = $bidRow['bid_code'];
       $buyerId = $bidRow['buyer_id'];
@@ -148,10 +149,10 @@ if (mysqli_num_rows($bidQuery) > 0) {
       echo '<span class="badge badge-success px-3 rounded-pill">Accepted</span>';
       break;
     case 'rejected':
-      echo '<span class="badge badge-maroonpx-3 rounded-pill">Rejected</span>';
+      echo '<span class="badge badge-danger px-3 rounded-pill">Rejected</span>';
       break;
       case 'canceled':
-        echo '<span class="badge badge-danger px-3 rounded-pill">Canceled</span>';
+        echo '<span class="badge badge-secondary px-3 rounded-pill">Canceled</span>';
         break;
     default:
       echo '<span class="badge badge-secondary px-3 rounded-pill">Unknown</span>';
@@ -166,7 +167,7 @@ if (mysqli_num_rows($bidQuery) > 0) {
       <span class="sr-only">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right" role="menu">
-      <button class="dropdown-item accept-bid-btn" data-bid-id="<?= $bidId; ?>">
+      <button class="dropdown-item accept-bid-btn" data-bid-id="<?= $bidId; ?>" data-harvest-schedule-id="<?= $harvestScheduleId; ?>">
         <i class="fas fa-check text-success"></i> Accept
       </button>
       <div class="dropdown-divider"></div>
@@ -245,7 +246,6 @@ function showerror(title, text, icon) {
     }
   });
 }
-
 
 
      

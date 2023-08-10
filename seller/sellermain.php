@@ -105,7 +105,7 @@ include('../Assets/includes/sidebar.php');
               <span class="info-box-icon bg-gradient-warning elevation-1"><i class="fas fa-list"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Total Pending Orders</span>
-                <span class="info-box-number text-right h4">4</span>
+                <span class="info-box-number text-right h4"><?php echo $pendingCount?></span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -113,10 +113,10 @@ include('../Assets/includes/sidebar.php');
 
           <div class="col-12 col-lg-6 col-lg-6">
             <div class="info-box custom-info-box">
-              <span class="info-box-icon bg-gradient-info elevation-1"> <i class="nav-icon fas fa-star"></i></span>
+              <span class="info-box-icon bg-gradient-info elevation-1"><i class="nav-icon fa-brands fa-readme"></i></span>
               <div class="info-box-content">
-                <span class="info-box-text">Total Ratings & Reviews</span>
-                <span class="info-box-number text-right h4">4</span>
+                <span class="info-box-text">Total Harvest Schedule Listings</span>
+                <span class="info-box-number text-right h4"><?php echo $HarvestScheduleCount?></span>
               </div>
               <!-- /.info-box-content -->
             </div>

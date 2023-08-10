@@ -78,7 +78,7 @@ include_once('../php/notifications.php');
                 </li>
                 
                 <?php include('../Assets/includes/notification.php');?>
-
+              
                 <li class="nav-item">
                     <a class="nav-link mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
                     <?php
@@ -87,6 +87,9 @@ include_once('../php/notifications.php');
                       }
                       ?>
                   </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="#"><i class="fa-solid fa-message"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">

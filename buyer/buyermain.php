@@ -89,7 +89,7 @@ include_once('../php/notifications.php');
                   </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-2" href="#"><i class="fa-solid fa-message"></i></a>
+                    <a class="nav-link mx-2" href="../buyer/chat_users.php"><i class="fa-solid fa-message"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">

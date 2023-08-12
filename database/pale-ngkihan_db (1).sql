@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2023 at 11:26 AM
+-- Generation Time: Aug 12, 2023 at 03:54 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -67,6 +67,7 @@ CREATE TABLE `buyer_accounts` (
   `email` text NOT NULL,
   `password` text NOT NULL,
   `status` tinyint(1) NOT NULL,
+  `online_status` tinyint(4) DEFAULT 1,
   `profile_picture` text NOT NULL,
   `valid_id` text NOT NULL,
   `delete_flag` tinyint(1) NOT NULL,
@@ -78,8 +79,8 @@ CREATE TABLE `buyer_accounts` (
 -- Dumping data for table `buyer_accounts`
 --
 
-INSERT INTO `buyer_accounts` (`id`, `unique_id`, `first_name`, `middle_name`, `last_name`, `gender`, `contact`, `address`, `email`, `password`, `status`, `profile_picture`, `valid_id`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(41, 'B-2023-06-28-1', 'Accentaur', 'Vi', 'Brittania', 'Male', '0997488681', 'Pampanga', 'dkcglenn@gmail.com', '48e8b1e1f2b13da43073d551636f4b1a', 1, 'buyer_profiles/B-2023-06-28-1/profilePicture.png', 'buyer_profiles/B-2023-06-28-1/validid.png', 0, '2023-06-28 05:10:48', '2023-07-05 12:28:21');
+INSERT INTO `buyer_accounts` (`id`, `unique_id`, `first_name`, `middle_name`, `last_name`, `gender`, `contact`, `address`, `email`, `password`, `status`, `online_status`, `profile_picture`, `valid_id`, `delete_flag`, `date_created`, `date_updated`) VALUES
+(41, 'B-2023-06-28-1', 'Accentaur', 'Vi', 'Brittania', 'Male', '0997488681', 'Pampanga', 'dkcglenn@gmail.com', '48e8b1e1f2b13da43073d551636f4b1a', 1, 1, 'buyer_profiles/B-2023-06-28-1/profilePicture.png', 'buyer_profiles/B-2023-06-28-1/validid.png', 0, '2023-06-28 05:10:48', '2023-08-12 13:52:40');
 
 -- --------------------------------------------------------
 
@@ -89,11 +90,20 @@ INSERT INTO `buyer_accounts` (`id`, `unique_id`, `first_name`, `middle_name`, `l
 
 CREATE TABLE `buyer_bids` (
   `id` int(30) NOT NULL,
-  `harvest_schedule_id` int(30) DEFAULT NULL,
-  `buyer_id` int(30) DEFAULT NULL,
+  `harvest_schedule_id` int(30) NOT NULL,
+  `buyer_id` int(30) NOT NULL,
   `bid_amount` double DEFAULT NULL,
-  `bid_status` enum('pending','accepted','rejected') DEFAULT NULL
+  `bid_status` enum('pending','accepted','rejected','canceled') NOT NULL,
+  `bid_code` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `buyer_bids`
+--
+
+INSERT INTO `buyer_bids` (`id`, `harvest_schedule_id`, `buyer_id`, `bid_amount`, `bid_status`, `bid_code`) VALUES
+(45, 22, 41, NULL, 'accepted', 'BID-1691594204-OUXNG6JS'),
+(48, 21, 41, 53, 'canceled', 'BID-1691594583-VBECNA9B');
 
 -- --------------------------------------------------------
 
@@ -159,7 +169,29 @@ CREATE TABLE `harvest_schedule` (
 
 INSERT INTO `harvest_schedule` (`id`, `seller_id`, `date_scheduled`, `rice_type`, `harvest_image`, `quantity_available`, `location`, `status`, `bidding_status`, `starting_bid`) VALUES
 (21, 10, '2023-08-08 16:00:00', 'Dinoradoto', '../seller_profiles/S-2023-07-06-1/-64d0a6114f698.png', 200, 'Latitude: 15.1521, Longitude: 120.5863', 'upcoming', 1, 0),
-(22, 10, '2023-08-18 16:00:00', 'Jasmine Rice', '../seller_profiles/S-2023-07-06-1/-64d0fdeae3bb0.png', 400, 'dito lang sa gilid', 'upcoming', 0, 23);
+(22, 10, '2023-08-10 12:14:10', 'Jasmine Rice', '../seller_profiles/S-2023-07-06-1/-64d0fdeae3bb0.png', 400, 'dito lang sa gilid', 'completed', 0, 23);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `msg_id` int(11) NOT NULL,
+  `incoming_msg_id` varchar(100) NOT NULL,
+  `outgoing_msg_id` varchar(100) NOT NULL,
+  `msg` varchar(1000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`msg_id`, `incoming_msg_id`, `outgoing_msg_id`, `msg`) VALUES
+(1, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'hello'),
+(2, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'maganda poba weather diyan'),
+(3, 'S-2023-07-06-1', 'B-2023-06-28-1', 'manyaman poba talaga?');
 
 -- --------------------------------------------------------
 
@@ -169,7 +201,6 @@ INSERT INTO `harvest_schedule` (`id`, `seller_id`, `date_scheduled`, `rice_type`
 
 CREATE TABLE `notifications` (
   `id` int(30) NOT NULL,
-  `order_list_id` int(30) NOT NULL,
   `order_code` varchar(100) NOT NULL,
   `buyer_id` int(11) NOT NULL,
   `notification_title` text NOT NULL,
@@ -182,14 +213,12 @@ CREATE TABLE `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `order_list_id`, `order_code`, `buyer_id`, `notification_title`, `message`, `timestamp`, `is_seen`) VALUES
-(6, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Placed', 'Your order with Order Number ORD-1690810528-7780DBGN has been successfully placed.\n', '2023-07-31 13:35:28', 1),
-(7, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Placed', 'Your order with Order Number ORD-1690812777-KLY4U5ZK has been successfully placed.\n', '2023-07-31 14:12:57', 1),
-(8, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Confirmed', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'1\'.', '2023-08-02 06:46:03', 1),
-(9, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Packed', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'2\'.', '2023-08-02 06:46:30', 1),
-(10, 34, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Cancelled', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'5\'.', '2023-08-07 06:27:50', 1),
-(11, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Status: Cancelled', 'The order with code \'ORD-1690812777-KLY4U5ZK\' has been updated to status \'5\'.', '2023-08-07 06:28:09', 1),
-(12, 35, 'ORD-1690812777-KLY4U5ZK', 41, 'Order Status: Delivered', 'The order with code \'ORD-1690812777-KLY4U5ZK\' has been updated to status \'Order Status: Delivered\'.', '2023-08-07 06:34:59', 1);
+INSERT INTO `notifications` (`id`, `order_code`, `buyer_id`, `notification_title`, `message`, `timestamp`, `is_seen`) VALUES
+(15, 'ORD-1691586595-5X5BMQKW', 41, 'Order Placed', 'Your order with Order Number ORD-1691586595-5X5BMQKW has been successfully placed.\n', '2023-08-09 13:09:55', 0),
+(17, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Pending', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'Order Status: Pending\'.', '2023-08-09 14:55:16', 0),
+(18, 'ORD-1690810528-7780DBGN', 41, 'Order Status: Confirmed', 'The order with code \'ORD-1690810528-7780DBGN\' has been updated to status \'Order Status: Confirmed\'.', '2023-08-09 14:55:53', 0),
+(19, 'BID-1691594204-OUXNG6JS', 41, 'Bid Status: Bid Placed', 'The Bid Order with the code \'BID-1691594204-OUXNG6JS\' has been succesfully been placed', '2023-08-09 15:16:44', 0),
+(22, 'BID-1691594583-VBECNA9B', 41, 'Bid Status: Bid Placed', 'The bid order with the code \'BID-1691594583-VBECNA9B\' that has a bid amount of \'₱53\' has been succesfully been placed', '2023-08-09 15:23:03', 0);
 
 -- --------------------------------------------------------
 
@@ -205,6 +234,13 @@ CREATE TABLE `order_items` (
   `review_status` tinyint(1) NOT NULL DEFAULT 0,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`, `price`, `review_status`, `date_created`) VALUES
+(37, 22, 1, 67, 0, '2023-08-09 13:09:55');
 
 -- --------------------------------------------------------
 
@@ -232,8 +268,9 @@ CREATE TABLE `order_list` (
 --
 
 INSERT INTO `order_list` (`id`, `order_code`, `buyer_id`, `seller_id`, `total_amount`, `delivery_address`, `order_status`, `date_created`, `date_updated`, `payment_method`, `online_payment_receipt`, `delivery_method`) VALUES
-(34, 'ORD-1690810528-7780DBGN', 41, 10, 150, 'Pampanga', 5, '2023-07-31 13:35:28', '2023-08-07 06:27:50', 'Online Payment', NULL, 'Delivery'),
-(35, 'ORD-1690812777-KLY4U5ZK', 41, 10, 750, 'Pampanga', 4, '2023-07-31 14:12:57', '2023-08-07 06:34:59', 'Online Payment', NULL, 'Delivery');
+(34, 'ORD-1690810528-7780DBGN', 41, 10, 150, 'Pampanga', 1, '2023-07-31 13:35:28', '2023-08-09 14:55:53', 'Online Payment', NULL, 'Delivery'),
+(35, 'ORD-1690812777-KLY4U5ZK', 41, 10, 750, 'Pampanga', 4, '2023-07-31 14:12:57', '2023-08-07 06:34:59', 'Online Payment', NULL, 'Delivery'),
+(37, 'ORD-1691586595-5X5BMQKW', 41, 11, 67, 'Pampanga', 1, '2023-08-09 13:09:55', '2023-08-09 13:15:18', 'Cash', NULL, 'Pick Up');
 
 -- --------------------------------------------------------
 
@@ -302,6 +339,7 @@ CREATE TABLE `seller_accounts` (
   `valid_id` text NOT NULL,
   `shop_logo` text NOT NULL,
   `status` tinyint(1) NOT NULL,
+  `online_status` tinyint(4) DEFAULT 1,
   `delete_flag` tinyint(1) NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `date_updated` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
@@ -311,9 +349,9 @@ CREATE TABLE `seller_accounts` (
 -- Dumping data for table `seller_accounts`
 --
 
-INSERT INTO `seller_accounts` (`id`, `unique_id`, `username`, `shop_name`, `shop_owner`, `gender`, `contact`, `address`, `email`, `password`, `has_pstore`, `business_permit`, `dti_permit`, `mayors_permit`, `valid_id`, `shop_logo`, `status`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(10, 'S-2023-07-06-1', 'ManyamanNasi101', 'ManyamanNasi', 'Manyaman A. Nasi', 'Male', '0997488682', 'Arayat', 'nasiisthelife@gmail.com', '7cef8a734855777c2a9d0caf42666e69', 'Yes', 'seller_profiles/S-2023-07-06-1/businesspermit.png', 'seller_profiles/S-2023-07-06-1/dtipermit.png', 'seller_profiles/S-2023-07-06-1/mayorspermit.png', 'seller_profiles/S-2023-07-06-1/validid.png', 'seller_profiles/S-2023-07-06-1/shoplogo.png', 1, 0, '2023-07-06 12:17:51', NULL),
-(11, 'S-2023-07-25-2024', 'palaynaman', 'Palayseller', 'palaytheseller', 'Male', '09978726342', 'Batasan', 'palaytheseller@seller.com', '7cef8a734855777c2a9d0caf42666e69', 'No', '', '', '', 'seller_profiles/S-2023-07-25-2024/validid.png', 'seller_profiles/S-2023-07-25-2024/shoplogo.png', 1, 0, '2023-07-25 10:31:51', NULL);
+INSERT INTO `seller_accounts` (`id`, `unique_id`, `username`, `shop_name`, `shop_owner`, `gender`, `contact`, `address`, `email`, `password`, `has_pstore`, `business_permit`, `dti_permit`, `mayors_permit`, `valid_id`, `shop_logo`, `status`, `online_status`, `delete_flag`, `date_created`, `date_updated`) VALUES
+(10, 'S-2023-07-06-1', 'ManyamanNasi101', 'ManyamanNasi', 'Manyaman A. Nasi', 'Male', '0997488682', 'Arayat', 'nasiisthelife@gmail.com', '7cef8a734855777c2a9d0caf42666e69', 'Yes', 'seller_profiles/S-2023-07-06-1/businesspermit.png', 'seller_profiles/S-2023-07-06-1/dtipermit.png', 'seller_profiles/S-2023-07-06-1/mayorspermit.png', 'seller_profiles/S-2023-07-06-1/validid.png', 'seller_profiles/S-2023-07-06-1/shoplogo.png', 1, 0, 0, '2023-07-06 12:17:51', '2023-08-12 13:52:25'),
+(11, 'S-2023-07-25-2024', 'palaynaman', 'Palayseller', 'palaytheseller', 'Male', '09978726342', 'Batasan', 'palaytheseller@seller.com', '7cef8a734855777c2a9d0caf42666e69', 'No', '', '', '', 'seller_profiles/S-2023-07-25-2024/validid.png', 'seller_profiles/S-2023-07-25-2024/shoplogo.png', 1, 1, 0, '2023-07-25 10:31:51', NULL);
 
 --
 -- Indexes for dumped tables
@@ -361,13 +399,17 @@ ALTER TABLE `harvest_schedule`
   ADD KEY `seller_idfk` (`seller_id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`msg_id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_buyer_id` (`buyer_id`),
-  ADD KEY `fk_notifications_order_code` (`order_code`),
-  ADD KEY `fk_notifications_order_list_id` (`order_list_id`);
+  ADD KEY `fk_buyer_id` (`buyer_id`);
 
 --
 -- Indexes for table `order_items`
@@ -426,13 +468,13 @@ ALTER TABLE `buyer_accounts`
 -- AUTO_INCREMENT for table `buyer_bids`
 --
 ALTER TABLE `buyer_bids`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `category_list`
@@ -447,16 +489,22 @@ ALTER TABLE `harvest_schedule`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `product_list`
@@ -504,9 +552,7 @@ ALTER TABLE `harvest_schedule`
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `fk_buyer_id` FOREIGN KEY (`buyer_id`) REFERENCES `buyer_accounts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_notifications_order_code` FOREIGN KEY (`order_code`) REFERENCES `order_list` (`order_code`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_notifications_order_list_id` FOREIGN KEY (`order_list_id`) REFERENCES `order_list` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_buyer_id` FOREIGN KEY (`buyer_id`) REFERENCES `buyer_accounts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `order_items`

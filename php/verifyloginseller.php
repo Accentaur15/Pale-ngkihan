@@ -11,7 +11,15 @@ if (!empty($Email) && !empty($Password)) {
     if ($row) {
       $_SESSION['unique_id'] = $row['unique_id'];
       $_SESSION['email'] = $row['email'];
-      echo "success";
+
+      // Update the online_status to 1 for the logged-in user
+      $updateSql = mysqli_query($conn, "UPDATE seller_accounts SET online_status = 1 WHERE email = '{$Email}'");
+
+      if ($updateSql) {
+        echo "success";
+      } else {
+        echo "Failed to update online status.";
+      }
     } 
   } else {
     echo "Email or Password is Incorrect";

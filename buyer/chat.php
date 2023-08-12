@@ -53,7 +53,7 @@ include_once('../php/notifications.php');
 <link rel="stylesheet" href="../Assets/plugins/fontawesome-free/css/all.min.css">
 <script src="https://kit.fontawesome.com/0ad1512e05.js" crossorigin="anonymous"></script>
 <!--css-->
-<link href="chat_users.css" rel="stylesheet">
+<link href="chat.css" rel="stylesheet">
 <!-- Theme style -->
 <link rel="stylesheet" href="../Assets/dist/css/adminlte.min.css">
 <!--fontawesome-->
@@ -133,46 +133,41 @@ include_once('../php/notifications.php');
 <!-- Card Container -->
 <div class="card shadow rounded">
     <div class="card-body">
-        <!-- User Profile Section -->
-        <div class="wrapper">
-            <section class="users">
-                <header>
-                    <div class="content">
-                        <img src="../<?php echo $profilePicture ?>" alt="">
-                        <div class="details">
-                            <span><?php echo $fname. " " . $lname ?></span>
-                           <!-- Conditional statement to display "Active Now" -->
-<p>
-    <?php
+    <div class="wrapper">
+    <section class="chat-area">
+      <header>
+      <?php 
+                                    $unique_id = mysqli_real_escape_string($conn, $_GET['unique_id']); // Use unique_id here
+                                    $sql = mysqli_query($conn, "SELECT * FROM seller_accounts WHERE unique_id = '{$unique_id}'");
+                                    if(mysqli_num_rows($sql) > 0){
+                                        $row = mysqli_fetch_assoc($sql);
+                                    } else {
+                                        header("Location: ../buyerlogin.php");
+                                    }
+                                ?>
+        <a href="chat_users.php" class="back-icon"><i class="fas fa-arrow-left"></i></a>
+        <img src="../<?php echo $row['shop_logo']; ?>" alt="">
+        <div class="details">
+          <span><?php echo $row['shop_name'] ?></span> 
+          <p> <?php
     if ($row['online_status'] == 1) {
         echo "Active Now";
     } else {
         echo"Offline Now";
     }
-    ?>
-</p>
-
-                        </div>
-                    </div>
-                    <div class="searchdiv">
-                <!-- Combined search input and button as an input group -->
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Search users...">
-                    <button class="btn btn-success" type="button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-                </header>
-                <div class="search">
-                    <span class="text">Select a message to start a chat</span>
-                </div>
-                <div class="users-list">
-    <!-- Include the dynamic user list from chat.php using AJAX -->
-</div>
-            </section>
+    ?></p>
         </div>
-        <!-- End of User Profile Section -->
+      </header>
+      <div class="chat-box">
+
+      </div>
+      <form action="#" class="typing-area">
+        <input type="text" class="incoming_id" name="incoming_id" value="<?php echo $unique_id; ?>" hidden>
+        <input type="text" name="message" class="input-field" placeholder="Type a message here..." autocomplete="off">
+        <button><i class="fab fa-telegram-plane"></i></button>
+      </form>
+    </section>
+  </div>
     </div>
 </div>
 <!-- End of Card Container -->
@@ -193,63 +188,69 @@ include_once('../php/notifications.php');
 
 
 <script>
+const form = document.querySelector(".typing-area"),
+incoming_id = form.querySelector(".incoming_id").value,
+inputField = form.querySelector(".input-field"),
+sendBtn = form.querySelector("button"),
+chatBox = document.querySelector(".chat-box");
 
-    const searchBar = document.querySelector("input[type='text'][placeholder='Search users...']");
-    const usersList = document.querySelector(".users-list");
+form.onsubmit = (e)=>{
+    e.preventDefault();
+}
 
-    // Function to load existing conversations and update the user list
-    function loadConversations() {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "../php/get_users.php", true);
-        xhr.onload = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    let data = xhr.response;
-                    usersList.innerHTML = data;
-                }
-            }
-        };
-        xhr.send();
+inputField.focus();
+inputField.onkeyup = ()=>{
+    if(inputField.value != ""){
+        sendBtn.classList.add("active");
+    }else{
+        sendBtn.classList.remove("active");
     }
+}
 
-    // Load existing conversations when the page loads
-    loadConversations();
-
-    // Handle search functionality
-    searchBar.onkeyup = () => {
-        let searchTerm = searchBar.value.trim();
-        if (searchTerm === "") {
-            // If the search term is empty, load existing conversations
-            loadConversations();
-        } else {
-            // Perform a search for matching sellers
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "../php/get_users.php", true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.onload = () => {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        let data = xhr.response;
-                        usersList.innerHTML = data;
-                    }
-                }
-            };
-            xhr.send("searchTerm=" + searchTerm);
-        }
-    };
-    
-// Handle click on a user (seller) to start a chat
-usersList.addEventListener("click", (event) => {
-    // Check if the clicked element is an <a> tag (seller link)
-    if (event.target.tagName === "A") {
-        // Prevent the default link behavior
-        event.preventDefault();
-        // Extract the unique_id from the link's data attribute
-        let uniqueId = event.target.getAttribute("data-seller-id");
-        // Navigate to the chat page with the selected seller's unique_id
-        window.location.href = "chat.php?unique_id=" + uniqueId;
+sendBtn.onclick = ()=>{
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "../php/send_chat.php", true);
+    xhr.onload = ()=>{
+      if(xhr.readyState === XMLHttpRequest.DONE){
+          if(xhr.status === 200){
+              inputField.value = "";
+              scrollToBottom();
+          }
+      }
     }
-});
+    let formData = new FormData(form);
+    xhr.send(formData);
+}
+chatBox.onmouseenter = ()=>{
+    chatBox.classList.add("active");
+}
+
+chatBox.onmouseleave = ()=>{
+    chatBox.classList.remove("active");
+}
+
+setInterval(() =>{
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "../php/get_chat.php", true);
+    xhr.onload = ()=>{
+      if(xhr.readyState === XMLHttpRequest.DONE){
+          if(xhr.status === 200){
+            let data = xhr.response;
+            chatBox.innerHTML = data;
+            if(!chatBox.classList.contains("active")){
+                scrollToBottom();
+              }
+          }
+      }
+    }
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("incoming_id="+incoming_id);
+}, 500);
+
+function scrollToBottom(){
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  
 
 </script>
 

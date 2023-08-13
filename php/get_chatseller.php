@@ -13,7 +13,7 @@ if (isset($_SESSION['unique_id'])) {
 
     // Query to retrieve chat messages
     $sql = "SELECT * FROM messages 
-    LEFT JOIN seller_accounts ON seller_accounts.unique_id = messages.outgoing_msg_id
+    LEFT JOIN buyer_accounts ON buyer_accounts.unique_id = messages.outgoing_msg_id
     WHERE (messages.outgoing_msg_id = '{$outgoing_id}' AND messages.incoming_msg_id = '{$incoming_id}')
     OR (messages.outgoing_msg_id = '{$incoming_id}' AND messages.incoming_msg_id = '{$outgoing_id}')
     ORDER BY messages.msg_id";
@@ -35,7 +35,7 @@ if (isset($_SESSION['unique_id'])) {
                             </div>';
             } else {
                 $output .= '<div class="chat incoming">
-                            <img src="../' . $row['shop_logo'] . '" alt="">
+                            <img src="../' . $row['profile_picture'] . '" alt="">
                             <div class="details">
                                 <p>' . $row['msg'] . '</p>
                                 <small class="text-muted"><i class="far fa-clock"></i> ' . $timestamp . '</small>

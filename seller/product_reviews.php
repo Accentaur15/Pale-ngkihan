@@ -96,7 +96,7 @@ include('../Assets/includes/sidebar.php');
 
       <div class="card">
   <div class="card-header">
-    <h3 class="card-title">Products List</h3>
+    <h3 class="card-title">Review List</h3>
   </div>
   <div class="card-body">
     <table id="productListTable" class="table table-bordered">

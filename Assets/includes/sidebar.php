@@ -87,7 +87,7 @@ Harvest Schedule
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="../seller/getchat_users.php" class="nav-link">
               <i class="nav-icon fas fa-comments"></i>
               <p>
                Customer Messages
@@ -96,7 +96,7 @@ Harvest Schedule
           </li>
           <li class="nav-header">Maintenance</li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="../seller/admin_support.php" class="nav-link">
               <i class="nav-icon fa fa-headset"></i>
               <p>
                Admin Support

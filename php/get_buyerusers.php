@@ -5,29 +5,30 @@ $outgoing_id = $_SESSION['unique_id'];
 
 // Check if a search term is provided
 if (isset($_POST['searchTerm'])) {
-    // Handle search results for sellers
+    // Handle search results for buyers
     $searchTerm = mysqli_real_escape_string($conn, $_POST['searchTerm']);
-    // Modify the SQL query to search for sellers based on shop name or shop owner
-    $sql = "SELECT * FROM seller_accounts 
-            WHERE (shop_name LIKE '%{$searchTerm}%'
-            OR shop_owner LIKE '%{$searchTerm}%')";
+    // Modify the SQL query to search for buyers based on attributes like first_name, last_name, or contact
+    $sql = "SELECT * FROM buyer_accounts 
+            WHERE (first_name LIKE '%{$searchTerm}%' OR
+                   last_name LIKE '%{$searchTerm}%' OR
+                   middle_name LIKE '%{$searchTerm}%')";
 
     $query = mysqli_query($conn, $sql);
     $output = "";
 
     if (mysqli_num_rows($query) == 0) {
-        // No matching sellers found
-        $output .= "No matching sellers found.";
+        // No matching buyers found
+        $output .= "No matching buyers found.";
     } else {
-        // Display search results for sellers
+        // Display search results for buyers
         while ($row = mysqli_fetch_assoc($query)) {
             // Generate HTML for each search result (clickable to start conversation)
             $offline = ($row['online_status'] == "0") ? "offline" : "";
             $output .= '<a href="chat.php?unique_id='. $row['unique_id'] .'">
                         <div class="content">
-                        <img src="../'. $row['shop_logo'] .'" alt="Profile Picture">
+                        <img src="../'. $row['profile_picture'] .'" alt="Profile Picture">
                         <div class="details">
-                            <span>'. $row['shop_name'] .'</span>
+                            <span>'. $row['first_name'] .' '. $row['last_name'] .'</span>
                             <p>No messages yet</p> <!-- Placeholder for message content -->
                         </div>
                         </div>
@@ -36,25 +37,25 @@ if (isset($_POST['searchTerm'])) {
         }
     }
 
-    // Output the search results for sellers
+    // Output the search results for buyers
     echo $output;
 } else {
-    // If no search term is provided, handle existing conversations
-    $sql = "SELECT DISTINCT seller_accounts.id AS seller_id, seller_accounts.shop_name, seller_accounts.shop_logo, seller_accounts.online_status, seller_accounts.unique_id
-            FROM seller_accounts
-            JOIN messages ON (messages.incoming_msg_id = seller_accounts.unique_id OR messages.outgoing_msg_id = seller_accounts.unique_id)
+    // If no search term is provided, handle existing conversations with buyers
+    $sql = "SELECT DISTINCT buyer_accounts.id AS buyer_id, buyer_accounts.first_name, buyer_accounts.last_name, buyer_accounts.profile_picture, buyer_accounts.online_status, buyer_accounts.unique_id
+            FROM buyer_accounts
+            JOIN messages ON (messages.incoming_msg_id = buyer_accounts.unique_id OR messages.outgoing_msg_id = buyer_accounts.unique_id)
             AND (messages.outgoing_msg_id = '{$outgoing_id}' OR messages.incoming_msg_id = '{$outgoing_id}')
-            WHERE seller_accounts.unique_id != '{$outgoing_id}' AND (messages.incoming_msg_id = '{$outgoing_id}' OR messages.outgoing_msg_id = '{$outgoing_id}')
+            WHERE buyer_accounts.unique_id != '{$outgoing_id}' AND (messages.incoming_msg_id = '{$outgoing_id}' OR messages.outgoing_msg_id = '{$outgoing_id}')
             ORDER BY messages.msg_id DESC";
 
     $query = mysqli_query($conn, $sql);
     $output = "";
 
     if (mysqli_num_rows($query) == 0) {
-        // No conversations available with sellers
-        $output .= "No conversations available with sellers.";
+        // No conversations available with buyers
+        $output .= "No conversations available with buyers.";
     } else {
-        // Display existing conversations
+        // Display existing conversations with buyers
         while ($row = mysqli_fetch_assoc($query)) {
             // Generate HTML for each conversation
             $offline = ($row['online_status'] == "0") ? "offline" : "";
@@ -74,12 +75,12 @@ if (isset($_POST['searchTerm'])) {
                 $is_outgoing = ($last_message_row['outgoing_msg_id'] == $outgoing_id);
             }
 
-            // Generate the conversation list item
-            $output .= '<a href="chat.php?unique_id='. $row['unique_id'] .'" data-seller-id="'. $row['unique_id'] .'">
+            // Generate the conversation list item for buyers
+            $output .= '<a href="chat.php?unique_id='. $row['unique_id'] .'" data-buyer-id="'. $row['unique_id'] .'">
                         <div class="content">
-                        <img src="../'. $row['shop_logo'] .'" alt="Profile Picture">
+                        <img src="../'. $row['profile_picture'] .'" alt="Profile Picture">
                         <div class="details">
-                            <span>'. $row['shop_name'] .'</span>
+                            <span>'. $row['first_name'] .' '. $row['last_name'] .'</span>
                             <p>'. ($last_message ? ($is_outgoing ? 'You: ' : '') . $last_message : 'No messages yet') .'</p>
                         </div>
                         </div>
@@ -88,7 +89,7 @@ if (isset($_POST['searchTerm'])) {
         }
     }
 
-    // Output the conversation list (existing conversations)
+    // Output the conversation list (existing conversations with buyers)
     echo $output;
 }
 ?>

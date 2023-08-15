@@ -74,10 +74,11 @@ include('../Assets/includes/sidebar.php');
                 <div class="chat-box">
                   <!-- The chat messages with the admin will appear here -->
                 </div>
-                <form action="#" class="typing-area">
-                  <input type="text" class="input-field" placeholder="Type your message here..." autocomplete="off">
-                  <button><i class="fab fa-telegram-plane"></i></button>
-                </form>
+                <form class="typing-area">
+  <input type="text" class="input-field" id="messageInput" name="message" placeholder="Type your message here..." autocomplete="off">
+  <button type="button" id="sendBtn"><i class="fab fa-telegram-plane"></i></button>
+</form>
+
               </section>
             </div>
             <!-- End of Support Chat Section -->
@@ -92,68 +93,81 @@ include('../Assets/includes/sidebar.php');
 
   <!-- REQUIRED SCRIPTS -->
   <script>
-    const form = document.querySelector(".typing-area"),
-      inputField = form.querySelector(".input-field"),
-      sendBtn = form.querySelector("button"),
-      chatBox = document.querySelector(".chat-box");
+const chatBox = document.querySelector(".chat-box");
+const form = document.querySelector(".typing-area");
+const sendBtn = document.getElementById("sendBtn");
+const messageInput = document.getElementById("messageInput");
 
-    // Prevent the form from being submitted on Enter key press
-    form.onsubmit = (e) => {
-      e.preventDefault();
-    }
+form.addEventListener("submit", (e) => {
+  e.preventDefault(); // Prevent default form submission
+  sendMessage(); // Call the function to send the message
+});
 
-    inputField.focus();
-    inputField.onkeyup = () => {
-      if (inputField.value.trim() !== "") {
-        sendBtn.classList.add("active");
-      } else {
-        sendBtn.classList.remove("active");
-      }
-    }
+sendBtn.addEventListener("click", () => {
+  sendMessage(); // Call the function to send the message
+});
 
-    // Send messages to the admin
-    sendBtn.onclick = () => {
-      let xhr = new XMLHttpRequest();
-      xhr.open("POST", "../php/send_to_admin.php", true);
-      xhr.onload = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            inputField.value = "";
-            scrollToBottom();
-          }
+messageInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault(); // Prevent form submission
+    sendMessage(); // Call the function to send the message
+  }
+});
+
+function sendMessage() {
+  const message = messageInput.value.trim();
+
+  if (message !== "") {
+    const formData = new FormData();
+    formData.append("user_type", "seller"); // Ensure this is correct: 'seller' or 'buyer'
+    formData.append("unique_id", '<?php echo $unique_id; ?>');
+    formData.append("message", message);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../php/send_to_admin.php", true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          messageInput.value = "";
+          // Optionally, you can load the updated chat here
+        } else {
+          // Handle errors if necessary
         }
       }
-      let formData = new FormData(form);
-      xhr.send(formData);
-    }
+    };
+    xhr.send(formData);
+  }
+}
 
-    // Load chat messages with the admin
-    function loadChat() {
-      let xhr = new XMLHttpRequest();
-      xhr.open("GET", "../php/load_admin_chat.php", true);
-      xhr.onload = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            let data = xhr.response;
-            chatBox.innerHTML = data;
-            scrollToBottom();
-          }
-        }
+// Load chat messages with the admin
+function loadChat() {
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", "../php/load_admin_chat.php", true);
+  xhr.onload = () => {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        let data = xhr.response;
+        chatBox.innerHTML = data;
+        scrollToBottom();
       }
-      xhr.send();
     }
+  }
+  xhr.send();
+}
 
-    // Load chat messages when the page loads
-    loadChat();
+// Load chat messages when the page loads
+loadChat();
 
-    // Scroll to the bottom of the chat box
-    function scrollToBottom() {
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+// Scroll to the bottom of the chat box
+function scrollToBottom() {
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-    // Poll for new messages every X seconds (adjust the interval as needed)
-    setInterval(loadChat, 5000);
-  </script>
+// Poll for new messages every X seconds (adjust the interval as needed)
+setInterval(loadChat, 5000);
+
+</script>
+
 
   <?php
     include('../Assets/includes/footer.php');

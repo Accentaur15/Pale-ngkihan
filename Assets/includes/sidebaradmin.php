@@ -95,6 +95,14 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="../admin/adminreports.php" class="nav-link">
+            <i class="nav-icon fa fa-headset"></i>
+              <p>
+               User Reports
+              </p>
+            </a>
+          </li>
           <li class="nav-header">Maintenance</li>
           <li class="nav-item">
             <a href="../admin/adminlist.php" class="nav-link">

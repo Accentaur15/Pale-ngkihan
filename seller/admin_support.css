@@ -86,7 +86,7 @@
     font-size: 19px;
     cursor: pointer;
     opacity: 0.8;
-    pointer-events: none;
+    pointer-events: auto; /* Change this to 'auto' to enable clicking */
     border-radius: 0 5px 5px 0;
     transition: opacity 0.3s ease;
   }
@@ -94,5 +94,12 @@
   .typing-area button.active {
     opacity: 1;
     pointer-events: auto;
+  }
+  
+  .timestamp {
+    font-size: 12px;
+    color: #777;
+    display: block;
+    margin-top: 5px;
   }
   

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 12, 2023 at 03:54 PM
+-- Generation Time: Aug 21, 2023 at 02:11 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -80,7 +80,7 @@ CREATE TABLE `buyer_accounts` (
 --
 
 INSERT INTO `buyer_accounts` (`id`, `unique_id`, `first_name`, `middle_name`, `last_name`, `gender`, `contact`, `address`, `email`, `password`, `status`, `online_status`, `profile_picture`, `valid_id`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(41, 'B-2023-06-28-1', 'Accentaur', 'Vi', 'Brittania', 'Male', '0997488681', 'Pampanga', 'dkcglenn@gmail.com', '48e8b1e1f2b13da43073d551636f4b1a', 1, 1, 'buyer_profiles/B-2023-06-28-1/profilePicture.png', 'buyer_profiles/B-2023-06-28-1/validid.png', 0, '2023-06-28 05:10:48', '2023-08-12 13:52:40');
+(41, 'B-2023-06-28-1', 'Accentaur', 'Vi', 'Brittania', 'Male', '0997488681', 'Pampanga', 'dkcglenn@gmail.com', '48e8b1e1f2b13da43073d551636f4b1a', 1, 0, 'buyer_profiles/B-2023-06-28-1/profilePicture.png', 'buyer_profiles/B-2023-06-28-1/validid.png', 0, '2023-06-28 05:10:48', '2023-08-21 12:07:19');
 
 -- --------------------------------------------------------
 
@@ -181,17 +181,24 @@ CREATE TABLE `messages` (
   `msg_id` int(11) NOT NULL,
   `incoming_msg_id` varchar(100) NOT NULL,
   `outgoing_msg_id` varchar(100) NOT NULL,
-  `msg` varchar(1000) NOT NULL
+  `msg` varchar(1000) NOT NULL,
+  `time_stamp` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`msg_id`, `incoming_msg_id`, `outgoing_msg_id`, `msg`) VALUES
-(1, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'hello'),
-(2, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'maganda poba weather diyan'),
-(3, 'S-2023-07-06-1', 'B-2023-06-28-1', 'manyaman poba talaga?');
+INSERT INTO `messages` (`msg_id`, `incoming_msg_id`, `outgoing_msg_id`, `msg`, `time_stamp`) VALUES
+(1, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'hello', '2023-08-12 13:56:46'),
+(2, 'S-2023-07-25-2024', 'B-2023-06-28-1', 'maganda poba weather diyan', '2023-08-12 13:56:46'),
+(3, 'S-2023-07-06-1', 'B-2023-06-28-1', 'manyaman poba talaga?', '2023-08-12 13:56:46'),
+(4, 'S-2023-07-06-1', 'B-2023-06-28-1', 'sarap po niyan', '2023-08-12 13:57:01'),
+(5, 'B-2023-06-28-1', 'S-2023-07-06-1', 'oo manyaman nga po ito', '2023-08-13 12:00:03'),
+(6, 'S-2023-07-06-1', 'B-2023-06-28-1', 'wehh di nga', '2023-08-13 12:06:13'),
+(7, 'B-2023-06-28-1', 'S-2023-07-06-1', 'oo nga po manyaman talaga ito', '2023-08-13 12:06:45'),
+(8, 'B-2023-06-28-1', 'S-2023-07-06-1', 'kung dika sigurado bumili ka', '2023-08-13 12:10:56'),
+(9, 'B-2023-06-28-1', 'S-2023-07-06-1', 'bili ka', '2023-08-15 11:44:13');
 
 -- --------------------------------------------------------
 
@@ -350,8 +357,64 @@ CREATE TABLE `seller_accounts` (
 --
 
 INSERT INTO `seller_accounts` (`id`, `unique_id`, `username`, `shop_name`, `shop_owner`, `gender`, `contact`, `address`, `email`, `password`, `has_pstore`, `business_permit`, `dti_permit`, `mayors_permit`, `valid_id`, `shop_logo`, `status`, `online_status`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(10, 'S-2023-07-06-1', 'ManyamanNasi101', 'ManyamanNasi', 'Manyaman A. Nasi', 'Male', '0997488682', 'Arayat', 'nasiisthelife@gmail.com', '7cef8a734855777c2a9d0caf42666e69', 'Yes', 'seller_profiles/S-2023-07-06-1/businesspermit.png', 'seller_profiles/S-2023-07-06-1/dtipermit.png', 'seller_profiles/S-2023-07-06-1/mayorspermit.png', 'seller_profiles/S-2023-07-06-1/validid.png', 'seller_profiles/S-2023-07-06-1/shoplogo.png', 1, 0, 0, '2023-07-06 12:17:51', '2023-08-12 13:52:25'),
-(11, 'S-2023-07-25-2024', 'palaynaman', 'Palayseller', 'palaytheseller', 'Male', '09978726342', 'Batasan', 'palaytheseller@seller.com', '7cef8a734855777c2a9d0caf42666e69', 'No', '', '', '', 'seller_profiles/S-2023-07-25-2024/validid.png', 'seller_profiles/S-2023-07-25-2024/shoplogo.png', 1, 1, 0, '2023-07-25 10:31:51', NULL);
+(10, 'S-2023-07-06-1', 'ManyamanNasi101', 'ManyamanNasi', 'Manyaman A. Nasi', 'Male', '0997488682', 'Arayat', 'nasiisthelife@gmail.com', '7cef8a734855777c2a9d0caf42666e69', 'Yes', 'seller_profiles/S-2023-07-06-1/businesspermit.png', 'seller_profiles/S-2023-07-06-1/dtipermit.png', 'seller_profiles/S-2023-07-06-1/mayorspermit.png', 'seller_profiles/S-2023-07-06-1/validid.png', 'seller_profiles/S-2023-07-06-1/shoplogo.png', 1, 0, 0, '2023-07-06 12:17:51', '2023-08-21 11:33:17'),
+(11, 'S-2023-07-25-2024', 'palaynaman', 'Palayseller', 'palaytheseller', 'Male', '09978726342', 'Batasan', 'palaytheseller@seller.com', '7cef8a734855777c2a9d0caf42666e69', 'No', '', '', '', 'seller_profiles/S-2023-07-25-2024/validid.png', 'seller_profiles/S-2023-07-25-2024/shoplogo.png', 1, 0, 0, '2023-07-25 10:31:51', '2023-08-18 12:32:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ticket`
+--
+
+CREATE TABLE `ticket` (
+  `ticket_id` int(11) NOT NULL,
+  `user_uniqueid` varchar(100) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `urgency_level` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `subject` text NOT NULL,
+  `description` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ticket`
+--
+
+INSERT INTO `ticket` (`ticket_id`, `user_uniqueid`, `category`, `urgency_level`, `status`, `subject`, `description`, `created_at`, `updated_at`) VALUES
+(12, 'S-2023-07-06-1', 'General Inquiry', 'Low', 'in progress', 'Bug Report', 'tcgfncvbfgcfasdc', '2023-08-21 02:48:13', '2023-08-21 06:52:05'),
+(13, 'S-2023-07-06-1', 'General Inquiry', 'Low', 'open', 'Bug Report', 'tcgfncvbfgcfasdc', '2023-08-21 02:48:15', '2023-08-21 06:52:34'),
+(15, 'S-2023-07-06-1', 'Feature Request', 'High', 'in progress', 'sdafs', 'fasfsadfd', '2023-08-21 02:53:50', '2023-08-21 06:54:50'),
+(17, 'B-2023-06-28-1', 'Bug Report', 'Low', 'open', 'Question', 'I have a question to you admin?', '2023-08-21 11:02:47', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ticketresponse`
+--
+
+CREATE TABLE `ticketresponse` (
+  `response_id` int(11) NOT NULL,
+  `ticket_id` int(11) NOT NULL,
+  `user_uniqueid` varchar(100) DEFAULT NULL,
+  `admin_uniqueid` text DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ticketresponse`
+--
+
+INSERT INTO `ticketresponse` (`response_id`, `ticket_id`, `user_uniqueid`, `admin_uniqueid`, `message`, `created_at`) VALUES
+(3, 12, NULL, '23', '<p>hello there&nbsp;</p>', '2023-08-21 06:47:03'),
+(4, 12, NULL, '23', '<p>hello po&nbsp;</p>', '2023-08-21 06:52:05'),
+(5, 13, NULL, '23', '<p>ano reklamo niyo</p>', '2023-08-21 06:52:24'),
+(6, 12, 'S-2023-07-06-1', NULL, '<p>may reklamo ako&nbsp;</p>', '2023-08-21 07:56:06'),
+(7, 13, 'S-2023-07-06-1', NULL, '<p>hindi maganda produkto niyo</p>', '2023-08-21 07:56:43'),
+(8, 17, 'B-2023-06-28-1', NULL, '<p>hello admin&nbsp;</p>', '2023-08-21 11:19:38'),
+(9, 17, NULL, '23', '<p>ano magagawa ko sainyo?</p>', '2023-08-21 11:20:28');
 
 --
 -- Indexes for dumped tables
@@ -449,6 +512,19 @@ ALTER TABLE `seller_accounts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `ticket`
+--
+ALTER TABLE `ticket`
+  ADD PRIMARY KEY (`ticket_id`);
+
+--
+-- Indexes for table `ticketresponse`
+--
+ALTER TABLE `ticketresponse`
+  ADD PRIMARY KEY (`response_id`),
+  ADD KEY `ticket_id` (`ticket_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -492,7 +568,7 @@ ALTER TABLE `harvest_schedule`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -523,6 +599,18 @@ ALTER TABLE `product_reviews`
 --
 ALTER TABLE `seller_accounts`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `ticket`
+--
+ALTER TABLE `ticket`
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `ticketresponse`
+--
+ALTER TABLE `ticketresponse`
+  MODIFY `response_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
@@ -580,6 +668,12 @@ ALTER TABLE `product_list`
 --
 ALTER TABLE `product_reviews`
   ADD CONSTRAINT `product_idfk` FOREIGN KEY (`product_id`) REFERENCES `order_items` (`product_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `ticketresponse`
+--
+ALTER TABLE `ticketresponse`
+  ADD CONSTRAINT `ticketresponse_ibfk_1` FOREIGN KEY (`ticket_id`) REFERENCES `ticket` (`ticket_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

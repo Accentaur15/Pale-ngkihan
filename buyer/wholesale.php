@@ -144,6 +144,9 @@ function getBidStatusColor($status) {
                       ?>
                 </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="../buyer/chat_users.php"><i class="fa-solid fa-message"></i></a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">
                 <li class="nav-item dropdown">
@@ -472,11 +475,17 @@ if ( $row['bidding_status'] == 0) {
 </div>
 
 <!-- Footer -->
-<footer class="copyright py-4 text-center text-white  p-2">
+        <!-- Footer -->
+        <div class="copyright text-center text-white d-flex p-2">
     <div class="container">
-        <small>&copy; Pale-ngkihan 2023</small>
+        <small>Copyright &copy; Pale-ngkihan 2023</small>
+        <hr class="mx-2">
+        
+        <a href="../buyer/support.php" class=" text-warning">
+            <i class="fas fa-life-ring"></i> Get Support
+        </a>
     </div>
-</footer>
+</div>
 
 <!-- ...remaining code... -->
 

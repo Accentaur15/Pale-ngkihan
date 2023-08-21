@@ -184,11 +184,17 @@ include_once('../php/notifications.php');
     </div>
 
     <!-- Footer -->
-    <footer class="copyright py-4 text-center text-white  p-2">
-        <div class="container">
-            <small>&copy; Pale-ngkihan 2023</small>
-        </div>
-    </footer>
+        <!-- Footer -->
+        <div class="copyright text-center text-white d-flex p-2">
+    <div class="container">
+        <small>Copyright &copy; Pale-ngkihan 2023</small>
+        <hr class="mx-2">
+        
+        <a href="../buyer/support.php" class=" text-warning">
+            <i class="fas fa-life-ring"></i> Get Support
+        </a>
+    </div>
+</div>
 
 
 

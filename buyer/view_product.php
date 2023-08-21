@@ -71,7 +71,10 @@ include_once('../php/notifications.php');
                     <a class="nav-link mx-3" aria-current="page" href="buyermain.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-3" href="../buyer/marketplace.php">Marketplace</a>
+                    <a class="nav-link active mx-3" href="../buyer/marketplace.php">Marketplace</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  mx-3" href="../buyer/wholesale.php">Wholesale</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
@@ -90,7 +93,7 @@ include_once('../php/notifications.php');
                 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-3" href="#"><i class="fas fa-calendar-day"></i></a>
+                    <a class="nav-link mx-2" href="../buyer/chat_users.php"><i class="fa-solid fa-message"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">
@@ -269,12 +272,17 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </section>
 </div>
 
-        <!-- Footer -->
-        <footer class="footer copyright py-4 text-center text-white  p-2">
-        <div class="container">
-            <small>&copy; Pale-ngkihan 2023</small>
-        </div>
-    </footer>
+<div class="copyright text-center text-white d-flex p-2">
+    <div class="container">
+        <small>Copyright &copy; Pale-ngkihan 2023</small>
+        <hr class="mx-2">
+        
+        <a href="../buyer/support.php" class=" text-warning">
+            <i class="fas fa-life-ring"></i> Get Support
+        </a>
+
+    </div>
+</div>
 
 <script>
 $(function() {

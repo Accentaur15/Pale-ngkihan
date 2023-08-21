@@ -235,6 +235,7 @@ $("#harvestScheduleTable").DataTable({
     "autoWidth": false,
     "responsive": true,
   });
+  
       
       $("#productListTable").DataTable({
     "paging": true,

@@ -89,13 +89,16 @@ if (mysqli_num_rows($qry) > 0) {
                 </li>
   <?php include('../Assets/includes/notification.php');?>
                 <li class="nav-item">
-                    <a class="nav-link active mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
+                    <a class="nav-link  mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
                     <?php
                       if ($cartItemCount > 0) {
                           echo '<span class="badge bg-success position-absolute top-0 end-0">' . $cartItemCount . '</span>';
                       }
                       ?>
                   </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="../buyer/chat_users.php"><i class="fa-solid fa-message"></i></a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto text-center">
@@ -300,9 +303,17 @@ function showFullImage(img) {
 
     <!-- Copyright Section-->
     
-    <div class="copyright py-4 text-center text-white d-flex p-2">
-      <div class="container"><small>Copyright &copy; Pale-ngkihan 2023</small></div>
-  </div>
+        <!-- Footer -->
+        <div class="copyright text-center text-white d-flex p-2">
+    <div class="container">
+        <small>Copyright &copy; Pale-ngkihan 2023</small>
+        <hr class="mx-2">
+        
+        <a href="../buyer/support.php" class=" text-warning">
+            <i class="fas fa-life-ring"></i> Get Support
+        </a>
+    </div>
+</div>
   <!-- bs-custom-file-input -->
 <script src="../Assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <!--Animation java-->

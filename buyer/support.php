@@ -1,62 +1,132 @@
 <?php
+
 session_start();
 include_once('../php/config.php');
+include_once('../php/cart_functions.php'); 
 $unique_id = $_SESSION['unique_id'];
 
 if (empty($unique_id)) {
-  header("Location: sellerlogin.php");
+    header("Location: ../buyerlogin.php");
 }
 
-$qry = mysqli_query($conn, "SELECT * FROM seller_accounts WHERE unique_id = '{$unique_id}'");
+$qry = mysqli_query($conn, "SELECT * FROM buyer_accounts WHERE unique_id = '{$unique_id}'");
 
 if (mysqli_num_rows($qry) > 0) {
-  $row = mysqli_fetch_assoc($qry);
-  if ($row) {
-    $shopname = $row['shop_name'];
-    $shoplogo = $row['shop_logo'];
-    $sellerid = $row['id'];
-  }
+    $row = mysqli_fetch_assoc($qry);
+    if ($row) {
+        $fname = $row['first_name'];
+        $lname = $row['last_name'];
+        $email = $row['email'];
+        $profilePicture = $row['profile_picture'];
+        $id = $row['id'];
+    }
 }
 
+$cartItemCount = getCartItemCount($conn, $id);
+include_once('../php/notifications.php'); 
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Seller | Admin Support</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buyer | Support Page</title>
+</head>
 
   <!-- summernote -->
   <link rel="stylesheet" href="../Assets/plugins/summernote/summernote-bs4.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="../Assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../Assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="../Assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../Assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-  <!--title icon-->
-  <link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="../Assets/plugins/fontawesome-free/css/all.min.css">
-  <script src="https://kit.fontawesome.com/0ad1512e05.js" crossorigin="anonymous"></script>
-    <!-- css style -->
-<link href="admin_support.css" rel="stylesheet">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../Assets/dist/css/adminlte.min.css">
-  <!-- Image JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- SweetAlert2 -->
 <link rel="stylesheet" href="../Assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-<?php 
-include('../Assets/includes/topbar.php');
-include('../Assets/includes/sidebar.php');
-?>
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="../Assets/plugins/fontawesome-free/css/all.min.css">
+<script src="https://kit.fontawesome.com/0ad1512e05.js" crossorigin="anonymous"></script>
+<!-- Theme style -->
+<link rel="stylesheet" href="../Assets/dist/css/adminlte.min.css">
+<!--css-->
+<link href="../buyer/support.css" rel="stylesheet">
+<!--fontawesome-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="apple-touch-icon" sizes="180x180" href="../Assets/logo/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../Assets/logo/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="../Assets/logo/favicon-16x16.png"/>
+<!--Animation-->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+<!--Navigation Bar-->
+<nav class="navbar navbar-expand-md navbar-light" style="background: rgb(229, 235, 232);">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+            <img src="../Assets/logo/Artboard 1.png" class="logo">
+        </a>
 
-    <form action="../php/process_ticket.php" method="POST">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+            <ul class="navbar-nav text-center">
+                <li class="nav-item">
+                    <a class="nav-link mx-3" aria-current="page" href="buyermain.php">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/marketplace.php">Marketplace</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  mx-3" href="../buyer/wholesale.php">Wholesale</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="buyeraboutus.php">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/myorders.php">My Orders</a>
+                </li>
+                <?php include('../Assets/includes/notification.php');?>
+                <li class="nav-item">
+                    <a class="nav-link mx-3" href="../buyer/cart.php"><i class="fa-solid fa-cart-shopping"></i>
+                    <?php
+                      if ($cartItemCount > 0) {
+                          echo '<span class="badge bg-success position-absolute top-0 end-0">' . $cartItemCount . '</span>';
+                      }
+                      ?>
+                </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="../buyer/chat_users.php"><i class="fa-solid fa-message"></i></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto text-center">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?php
+                        echo '<img src="../' . $profilePicture . '" alt="Profile Picture" class="avatar-image img-fluid">';
+                        ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right custom-dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="dropdown-header text-center text-md font-weight-bold text-dark"><?php echo $fname . ' ' . $lname; ?></li>
+                        <li class="text-center"><a class="dropdown-item" href="buyermyaccount.php">My Account</a></li>
+                        <li class="text-center"><a class="dropdown-item" href="../php/logout.php?logout_id=<?php echo $unique_id ?>">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--End of Navigation Bar-->
+
+<body>
+
+<!--Add Ticket Modal-->
+<form action="../php/process_ticket.php" method="POST">
         <div class="modal fade" id="addTicketModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
@@ -98,7 +168,7 @@ include('../Assets/includes/sidebar.php');
                     </div>
                     <div class="modal-footer">
                         <button name="submit" type="submit" class="buttons btn btn-success">Save Ticket</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -168,28 +238,20 @@ include('../Assets/includes/sidebar.php');
       <div class="modal-footer justify-content-end">
                
                 <button type="button" id="submitReply" class="btn btn-success">Submit Reply</button>
-                <button type="button" id="closeModalBtn" class="btn btn-secondary">Close</button>
+                <button type="button" id="closeModalBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
     </div>
   </div>
 </div>
 
 
+<div class="container flex-grow-1">
 
-
-
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-
-    <!-- Main content -->
-    <div class="content mt-4">
-      <div class="container-fluid">
-       
-      <div class="card">
+<div class="content py-3">
+<div class="card card-outline card-success rounded-0 shadow">
                         <div class="card-header">
                             <h2 class="card-title">Ticket List</h2>
-                            <a href="#" data-toggle="modal" data-target="#addTicketModal" class="btn btn-success btn-sm float-right"><i class="fas fa-plus"></i>&nbsp;Add Ticket</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#addTicketModal" class="btn btn-success btn-sm float-right"><i class="fas fa-plus"></i>&nbsp;Add Ticket</a>
                         </div>
                         <div class="card-body">
                             <table id="ticketTable" class="table table-bordered">
@@ -257,16 +319,16 @@ include('../Assets/includes/sidebar.php');
                                           <td><?= $formattedCreatedAt ?></td>
                                           <td class="text-center">
   <div class="btn-group">
-    <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+    <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon"  data-bs-toggle="dropdown" aria-expanded="false">
       Action
       <span class="sr-only">Toggle Dropdown</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right" role="menu">
-    <a href="#" class="dropdown-item view-ticket-btn" data-ticket-id="<?= $ticket['ticket_id']; ?>">
+    <a href="#" class="dropdown-item view-ticket-btn" data-ticket-id="<?= $ticket['ticket_id']; ?>" data-bs-toggle="modal" data-bs-target="#viewTicketModal">
                         <span class="fa-solid fa-eye text-dark"></span> View
                     </a>
       <div class="dropdown-divider"></div>
-      <button class="dropdown-item delete-data-btn" data-schedule-id="<?= $ticketId; ?>">
+        <button class="dropdown-item delete-data-btn" data-schedule-id="<?= $ticketId; ?>">
                 <i class="fas fa-trash text-danger"></i> Delete
             </button>
     </div>
@@ -285,70 +347,65 @@ include('../Assets/includes/sidebar.php');
                             </table>
                         </div>
                     </div>
-                </div>
 
-      </div><!-- /.container-fluid -->
+
+
+
+</div>
+   
     </div>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-
-  <!-- REQUIRED SCRIPTS -->
 
 
 
-  <?php
-    include('../Assets/includes/footer.php');
-  ?>
-
-<script>
-
-  // Handle the click event of the "Delete" button
-$('.delete-data-btn').click(function() {
-    var ticketId = $(this).data('schedule-id'); // Get the ticket ID from the data attribute
-    
-    // Show a confirmation dialog
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Send an AJAX request to delete the ticket
-            $.ajax({
-                url: '../php/delete_ticket.php', // Replace with the actual path to your delete script
-                type: 'POST',
-                data: {
-                    ticketId: ticketId
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        // Show a success message
-                        showAlert('Success', response.message, 'success');
-                        // Refresh the page after deletion
-                       
-                    } else {
-                        // Show an error message
-                        showerror('Error', response.message, 'error');
-                    }
-                },
-                error: function() {
-                    // Show an error message if AJAX request fails
-                    showerror('Error', 'An error occurred while deleting the ticket.', 'error');
-                }
-            });
-        }
-    });
-});
 
 
-  // Handle the click event of the "Submit Reply" button
-$('#submitReply').click(function() {
+
+
+
+
+        <!-- Footer -->
+        <div class="copyright text-center text-white d-flex p-2">
+    <div class="container">
+        <small>Copyright &copy; Pale-ngkihan 2023</small>
+        <hr class="mx-2">
+        
+        <a href="../buyer/support.php" class=" text-warning">
+            <i class="fas fa-life-ring"></i> Get Support
+        </a>
+    </div>
+</div>
+
+
+
+ <!-- REQUIRED SCRIPTS -->
+ <!-- Summernote -->
+<script src="../Assets/plugins/summernote/summernote-bs4.min.js"></script>
+    <!-- Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <!-- AdminLTE App -->
+    <script src="../Assets/dist/js/adminlte.min.js"></script>
+    <!--Animation java-->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="../Assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="../Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="../Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="../Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+        <script src="../Assets/plugins/jszip/jszip.min.js"></script>
+        <script src="../Assets/plugins/pdfmake/pdfmake.min.js"></script>
+        <script src="../Assets/plugins/pdfmake/vfs_fonts.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+        <script src="../Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+
+
+ // Handle the click event of the "Submit Reply" button
+ $('#submitReply').click(function() {
     var ticketId = $('#viewTicketId').text();
     var sellerReply = $('#sellerReply').val();
     
@@ -380,66 +437,9 @@ $('#submitReply').click(function() {
 });
 
 
-$(document).ready(function() {
+        AOS.init();
 
-  $('#sellerReply').summernote({
-            placeholder: 'Enter your reply here...',
-            height: 150, // Set the desired height
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link']],
-            ]
-        });
-
-
-    // Handle form submission
-    $('form').submit(function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-        
-        $.ajax({
-            url: $(this).attr('action'), // Use the form's action attribute
-            type: 'POST',
-            data: $(this).serialize(), // Serialize the form data
-            dataType: 'json', // Expect JSON response
-            success: function(response) {
-                if (response.status === 'success') {
-                    // Ticket added successfully, show success alert
-                    showAlert('Success', 'Ticket added successfully.', 'success');
-                } else if (response.status === 'error') {
-                    // Error adding ticket, show error alert
-                    showerror('Error', response.message, 'error');
-                }
-            },
-            error: function() {
-                // AJAX request failed, show a general error alert
-                showerror('Error', 'An error occurred. Please try again later.', 'error');
-            }
-        });
-    });
-
-    $('#ticketMessage').summernote({
-            placeholder: 'Enter your message here...',
-            height: 200, // Set the desired height
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['insert', ['link']],
-            ]
-        });
-
-
-
-});
-
-      $("#ticketTable").DataTable({
+        $("#ticketTable").DataTable({
     "paging": true,
     "lengthChange": true,
     "searching": true,
@@ -450,14 +450,11 @@ $(document).ready(function() {
   });
 
 
-$(document).ready(function() {
 
-  $('#closeModalBtn').click(function() {
-    $('#viewTicketModal').modal('hide');
-  });
-  
-    // Handle the click event of the "View" button
-    $('.view-ticket-btn').click(function() {
+  $(document).ready(function() {
+
+     // Handle the click event of the "View" button
+     $('.view-ticket-btn').click(function() {
         var ticketId = $(this).data('ticket-id'); // Get the ticket ID from the data attribute
         
         // Call a function to fetch ticket data by ID and populate the modal
@@ -499,7 +496,8 @@ $(document).ready(function() {
                             conversationHtml = '<div class="direct-chat-messages">';
 
                             if (conversation.length === 0) {
-                                conversationHtml += '<p class="no-history-message">No conversation history found.</p>';
+                                conversationHtml += '<p class="no-history-message text-muted text-center py-3">No conversation history found.</p>';
+
                             } else {
                                 // Loop through conversation messages and build HTML
                                 for (var i = 0; i < conversation.length; i++) {
@@ -564,9 +562,66 @@ $(document).ready(function() {
         }
     });
 }
+
+
+
+
+
+    $('#ticketMessage').summernote({
+            placeholder: 'Enter your message here...',
+            height: 200, // Set the desired height
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['insert', ['link']],
+            ]
+        });
+    // Initialize the summernote editor
+    $('#sellerReply').summernote({
+        placeholder: 'Enter your reply here...',
+        height: 150, // Set the desired height
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link']],
+        ]
+    });
+
+
+        // Handle form submission
+        $('form').submit(function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+        
+        $.ajax({
+            url: $(this).attr('action'), // Use the form's action attribute
+            type: 'POST',
+            data: $(this).serialize(), // Serialize the form data
+            dataType: 'json', // Expect JSON response
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Ticket added successfully, show success alert
+                    showAlert('Success', 'Ticket added successfully.', 'success');
+                } else if (response.status === 'error') {
+                    // Error adding ticket, show error alert
+                    showerror('Error', response.message, 'error');
+                }
+            },
+            error: function() {
+                // AJAX request failed, show a general error alert
+                showerror('Error', 'An error occurred. Please try again later.', 'error');
+            }
+        });
+    });
+
+
 });
-
-
 
 
         // Define the showAlert function
@@ -610,7 +665,50 @@ function showerror(title, text, icon) {
   });
 }
 
+// Handle the click event of the "Delete" button
+$('.delete-data-btn').click(function() {
+    var ticketId = $(this).data('schedule-id'); // Get the ticket ID from the data attribute
+    
+    // Show a confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the ticket
+            $.ajax({
+                url: '../php/delete_ticket.php', // Replace with the actual path to your delete script
+                type: 'POST',
+                data: {
+                    ticketId: ticketId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Show a success message
+                        showAlert('Success', response.message, 'success');
+                       
+                      
+                    } else {
+                        // Show an error message
+                        showerror('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    // Show an error message if AJAX request fails
+                    showerror('Error', 'An error occurred while deleting the ticket.', 'error');
+                }
+            });
+        }
+    });
+});
 
 
-
-</script>
+    </script>
+</body>
+</html>
